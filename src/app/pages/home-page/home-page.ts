@@ -12,6 +12,6 @@ export class HomePage {
   constructor(private router: Router) {}
 
   goToChatDashboard() {
-    this.router.navigate(['/chat-dashboard']); // funciona em button
+    this.router.navigate(['/login']); // funciona em button
   }
 }

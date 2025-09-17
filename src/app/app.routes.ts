@@ -1,9 +1,11 @@
 import { Routes } from '@angular/router';
 import { HomePage } from './pages/home-page/home-page';
 import { ChatDashboard } from './pages/chat-dashboard/chat-dashboard';
+import { LoginPage } from './pages/login-page/login-page';
 
 export const routes: Routes = [
   { path: '', component: HomePage },
+  { path: 'login', component: LoginPage},
   { path: 'chat-dashboard', component: ChatDashboard },
   { path: '**', redirectTo: '' }
 ];
