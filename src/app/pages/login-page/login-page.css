@@ -1,0 +1,105 @@
+/* --- Página Login / Registo --- */
+.auth-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #f5f6fa;
+  font-family: "Inter", sans-serif;
+}
+
+.auth-card {
+  background: #ffffff;
+  padding: 40px 32px;
+  border-radius: 16px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 8px 32px rgba(15,23,42,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  animation: slideUp 0.3s ease;
+}
+
+.auth-card h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #1f2937;
+  text-align: center;
+}
+
+.auth-card label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #374151;
+  margin-top: 12px;
+  margin-bottom: 6px;
+}
+
+.auth-card input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  font-size: 0.95rem;
+  transition: 0.2s;
+}
+
+.auth-card input:focus {
+  border-color: #1C3D72;
+  box-shadow: 0 0 0 2px rgba(28,61,114,0.15);
+  outline: none;
+}
+
+.auth-card .auth-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.auth-card .auth-actions button {
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.auth-card .auth-actions .login-btn {
+  background: linear-gradient(90deg,#1C3D72,#4D79D2);
+  color: white;
+}
+
+.auth-card .auth-actions .login-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.auth-card .auth-actions .register-btn {
+  background: #E4EBF8;
+  color: #1C3D72;
+}
+
+.auth-card .auth-actions .register-btn:hover {
+  background: #e5e7eb;
+}
+
+.auth-card .switch-auth {
+  text-align: center;
+  font-size: 0.85rem;
+  margin-top: 14px;
+  color: #6B7280;
+  cursor: pointer;
+}
+
+.auth-card .switch-auth span {
+  color: #1C3D72;
+  font-weight: 500;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
