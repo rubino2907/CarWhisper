@@ -1,12 +1,10 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.html',
-  styleUrl: './app.css'
+  standalone: true,
+  imports: [RouterOutlet], // router-outlet para renderizar rotas
+  template: `<router-outlet></router-outlet>`,
 })
-export class App {
-  protected readonly title = signal('chat-dashboard');
-}
+export class App {}

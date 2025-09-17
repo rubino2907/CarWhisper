@@ -1,0 +1,164 @@
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<div class="page">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="profile"> 
+      <img src="https://via.placeholder.com/40" alt="avatar"/>
+      <div class="name">Ruben Costa</div>
+      <div class="icons">⚙️</div>
+    </div>
+
+    <div class="search">
+      <input placeholder="Search for chats..."/>
+    </div>
+
+    <nav class="menu">
+      <button class="active">
+        <i class="fa-solid fa-message"></i>
+        Chats ({{ chats.length }})
+      </button>
+    </nav>
+
+    <div class="pinned">
+      <h4>Pinned</h4>
+      <ul>
+        <li>Modelo: gpt 3.5 turbo</li>
+        <li>Dataset: 1.1 Miliones of cars ( US UK DE) </li>
+      </ul>
+    </div>
+
+    
+    <div class="history">
+    <h4>Chat History</h4>
+    <ul>
+      <li 
+        *ngFor="let c of chats" 
+        (click)="openChat(c)" 
+        class="history-item">
+        
+        <div class="history-top">
+          <span class="chat-model">{{ c.model }}</span>
+          <small class="chat-date">{{ c.date }}</small>
+        </div>
+        <p class="last-msg">{{ c.lastMessage }}</p>
+      </li>
+    </ul>
+  </div>
+
+    <button class="new-chat" (click)="createNewChat()">+ Start new chat</button>
+    
+  </aside>
+
+  <!-- Main content -->
+  <main class="content">
+
+    <!-- Controls -->
+    <section class="controls" *ngIf="!selectedChat">
+      <div class="left">Chats ({{ chats.length }})</div>
+    </section>
+
+    <!-- Lista de chats -->
+    <section class="grid" *ngIf="!selectedChat">
+            <article 
+        class="card" 
+        *ngFor="let c of chats; let i = index" 
+        (click)="openChat(c)">
+        
+        <div class="card-head">
+          <small>{{ c.date }}</small>
+          <span class="badge">{{ c.model }}</span>
+        </div>
+
+        <p class="excerpt">{{ c.excerpt }}</p>
+
+        <div class="card-foot">
+          <span>💬 {{ c.replies }}</span>
+
+          <!-- botão delete -->
+          <button 
+            class="delete-btn" 
+            (click)="deleteChat(i); $event.stopPropagation()">
+            🗑️
+          </button>
+        </div>
+      </article>
+
+    </section>
+
+    <section class="chat-view" *ngIf="selectedChat">
+      <button (click)="closeChat()">← Back to chats</button>
+      <h3>Chat com {{ selectedChat.model }}</h3>
+
+      <!-- botão para abrir popup -->
+      <button class="open-popup" (click)="showPopup = true">
+        ➕ Adicionar features
+      </button>
+
+      <!-- mensagens -->
+      <div class="messages">
+        <div *ngFor="let msg of chatMessages" [ngClass]="msg.from">
+          <strong *ngIf="msg.from==='user'">You:</strong>
+          <strong *ngIf="msg.from==='bot'">{{ selectedChat.model }}:</strong>
+          {{ msg.message }}
+        </div>
+      </div>
+
+      <!-- input normal do chat -->
+      <div class="chat-input">
+        <input #msgInput placeholder="Escreve a tua mensagem..." />
+        <button class="send-btn" (click)="sendMessage(msgInput.value); msgInput.value=''">Enviar</button>
+      </div>
+    </section>
+
+    <!-- POPUP -->
+    <div class="popup-backdrop" *ngIf="showPopup">
+      <div class="popup">
+        <h3>Adicionar Features</h3>
+        <form (ngSubmit)="submitFeatures()">
+
+          <label>Model</label>
+          <input type="text" [(ngModel)]="newFeature.model" name="model" required />
+
+          <label>Year</label>
+          <input type="number" [(ngModel)]="newFeature.year" name="year" required />
+
+          <label>Transmission</label>
+          <select [(ngModel)]="newFeature.transmission" name="transmission">
+            <option value="automatic">Automatic</option>
+            <option value="manual">Manual</option>
+          </select>
+
+          <label>Odometer</label>
+          <input type="number" [(ngModel)]="newFeature.odometer" name="odometer" />
+
+          <label>Fuel</label>
+          <select [(ngModel)]="newFeature.fuel" name="fuel">
+            <option value="gas">Gas</option>
+            <option value="diesel">Diesel</option>
+            <option value="electric">Electric</option>
+          </select>
+
+          <label>Manufacturer</label>
+          <select [(ngModel)]="newFeature.manufacturer" name="manufacturer">
+            <option *ngFor="let brand of manufacturers" [value]="brand">{{ brand }}</option>
+          </select>
+
+          <label>Country</label>
+          <select [(ngModel)]="newFeature.country" name="country">
+            <option *ngFor="let c of countries" [value]="c">{{ c }}</option>
+          </select>
+
+          <div class="popup-actions">
+            <button type="button" (click)="closePopup()">Cancelar</button>
+            <button type="submit">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+
+
+  </main>
+</div>
