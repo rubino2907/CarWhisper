@@ -1,10 +1,11 @@
 <div class="auth-page">
-
   <div class="auth-card">
 
     <!-- LOGIN -->
     <div *ngIf="isLogin">
       <h2>Entrar</h2>
+
+      <div *ngIf="error" class="error-msg">{{ error }}</div>
 
       <label for="login-email">Email</label>
       <input type="email" id="login-email" [(ngModel)]="loginEmail" placeholder="Digite o seu email">
@@ -13,18 +14,23 @@
       <input type="password" id="login-password" [(ngModel)]="loginPassword" placeholder="Digite a sua senha">
 
       <div class="auth-actions">
-        <button type="button" class="login-btn" (click)="login()">Entrar</button>
+        <button type="button" class="login-btn" (click)="login()" [disabled]="loading">
+          {{ loading ? 'A processar...' : 'Entrar' }}
+        </button>
         <button type="button" class="register-btn" (click)="toggleAuth()">Registar</button>
       </div>
 
       <div class="switch-auth">
-        Não tens conta? <span (click)="toggleAuth()" style="cursor:pointer; color:#1C3D72; font-weight:500;">Regista-te aqui</span>
+        Não tens conta?
+        <span (click)="toggleAuth()" style="cursor:pointer; color:#1C3D72; font-weight:500;">Regista-te aqui</span>
       </div>
     </div>
 
     <!-- REGISTO -->
     <div *ngIf="!isLogin">
       <h2>Registar</h2>
+
+      <div *ngIf="error" class="error-msg">{{ error }}</div>
 
       <label for="register-name">Nome</label>
       <input type="text" id="register-name" [(ngModel)]="registerName" placeholder="Digite o seu nome">
@@ -37,14 +43,16 @@
 
       <div class="auth-actions">
         <button type="button" class="login-btn" (click)="toggleAuth()">Login</button>
-        <button type="button" class="register-btn" (click)="register()">Registar</button>
+        <button type="button" class="register-btn" (click)="register()" [disabled]="loading">
+          {{ loading ? 'A processar...' : 'Registar' }}
+        </button>
       </div>
 
       <div class="switch-auth">
-        Já tens conta? <span (click)="toggleAuth()" style="cursor:pointer; color:#1C3D72; font-weight:500;">Faz login aqui</span>
+        Já tens conta?
+        <span (click)="toggleAuth()" style="cursor:pointer; color:#1C3D72; font-weight:500;">Faz login aqui</span>
       </div>
     </div>
 
   </div>
-
 </div>

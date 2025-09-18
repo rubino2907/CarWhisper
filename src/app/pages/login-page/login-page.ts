@@ -2,44 +2,41 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login-page',
-  standalone: true,        
+  standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './login-page.html',
-  styleUrls: ['./login-page.css']  // ← corrigido
+  styleUrls: ['./login-page.css']
 })
 export class LoginPage {
+  isLogin = true;
+  loading = false;
+  error: string | null = null;
+
+  // Login
+  loginEmail = '';
+  loginPassword = '';
+
+  // Registo
+  registerName = '';
+  registerEmail = '';
+  registerPassword = '';
+
+  constructor(private auth: AuthService, private router: Router) {}
 
   ngOnInit() {
-  console.log('LoginPage carregada!');
+    console.log('LoginPage carregada!');
   }
 
-  // Injeta o Router
-  constructor(private router: Router) { }
-
-  // Controla se estamos em login ou registo
-  isLogin: boolean = true;
-
-  // Variáveis do login
-  loginEmail: string = '';
-  loginPassword: string = '';
-
-  // Variáveis do registo
-  registerName: string = '';
-  registerEmail: string = '';
-  registerPassword: string = '';
-
-  // Alterna entre login e registo
   toggleAuth() {
     this.isLogin = !this.isLogin;
-
-    // Limpa os campos quando muda de form
+    this.error = null;
     this.clearFields();
   }
 
-  // Limpar campos
   private clearFields() {
     this.loginEmail = '';
     this.loginPassword = '';
@@ -48,38 +45,41 @@ export class LoginPage {
     this.registerPassword = '';
   }
 
-  // Simula login
   login() {
     if (!this.loginEmail || !this.loginPassword) {
-      alert('Por favor, preencha todos os campos.');
+      this.error = 'Por favor, preencha todos os campos.';
       return;
     }
 
-    console.log('Login provisório:');
-    console.log('Email:', this.loginEmail);
-    console.log('Password:', this.loginPassword);
-
-    alert('Login realizado com sucesso (simulação)!');
-
-    // Navegar para o dashboard
-    this.router.navigate(['/chat-dashboard']);
+    this.loading = true;
+    this.auth.login(this.loginEmail, this.loginPassword).subscribe({
+      next: () => {
+        this.loading = false;
+        this.router.navigate(['/chat-dashboard']);
+      },
+      error: (err) => {
+        this.loading = false;
+        this.error = err.error?.message || 'Erro ao autenticar';
+      }
+    });
   }
 
-  // Simula registo
   register() {
     if (!this.registerName || !this.registerEmail || !this.registerPassword) {
-      alert('Por favor, preencha todos os campos.');
+      this.error = 'Por favor, preencha todos os campos.';
       return;
     }
 
-    console.log('Registo provisório:');
-    console.log('Nome:', this.registerName);
-    console.log('Email:', this.registerEmail);
-    console.log('Password:', this.registerPassword);
-
-    alert('Registo realizado com sucesso (simulação)!');
-
-    // Alterna para login após registo
-    this.toggleAuth();
+    this.loading = true;
+    this.auth.register(this.registerEmail, this.registerPassword, this.registerName).subscribe({
+      next: () => {
+        this.loading = false;
+        this.toggleAuth(); // volta para login
+      },
+      error: (err) => {
+        this.loading = false;
+        this.error = err.error?.message || 'Erro ao registar';
+      }
+    });
   }
 }
