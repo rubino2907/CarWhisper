@@ -18,37 +18,27 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   login(email: string, password: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.base}/login`, { email, password }).pipe(
-      tap(res => this.saveTokens(res))
-    );
+    return this.http.post<AuthResponse>(`${this.base}/login`, { email, password })
+      .pipe(tap(res => this.saveTokens(res)));
   }
 
   register(email: string, password: string, name?: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.base}/register`, { email, password, name }).pipe(
-      tap(res => this.saveTokens(res))
-    );
-  }
-
-  forgot(email: string): Observable<any> {
-    return this.http.post(`${this.base}/forgot`, { email });
+    return this.http.post<AuthResponse>(`${this.base}/register`, { email, password, name })
+      .pipe(tap(res => this.saveTokens(res)));
   }
 
   logout(): void {
-    localStorage.removeItem('stych_token');
-    localStorage.removeItem('stych_refresh');
+    localStorage.removeItem('carwhisper_token');
+    localStorage.removeItem('carwhisper_refresh');
   }
 
   isAuthenticated(): boolean {
-    return !!localStorage.getItem('stych_token');
-  }
-
-  getToken(): string | null {
-    return localStorage.getItem('stych_token');
+    return !!localStorage.getItem('carwhisper_token');
   }
 
   private saveTokens(res: AuthResponse | null): void {
     if (!res) return;
-    if (res.token) localStorage.setItem('stych_token', res.token);
-    if (res.refreshToken) localStorage.setItem('stych_refresh', res.refreshToken);
+    if (res.token) localStorage.setItem('carwhisper_token', res.token);
+    if (res.refreshToken) localStorage.setItem('carwhisper_refresh', res.refreshToken);
   }
 }

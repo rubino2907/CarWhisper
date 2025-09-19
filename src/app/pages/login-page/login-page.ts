@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, Inject, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
@@ -25,7 +25,11 @@ export class LoginPage {
   registerEmail = '';
   registerPassword = '';
 
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(
+    private auth: AuthService,
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {}
 
   ngOnInit() {
     console.log('LoginPage carregada!');
@@ -33,6 +37,7 @@ export class LoginPage {
 
   toggleAuth() {
     this.isLogin = !this.isLogin;
+    console.log('Alternou auth, isLogin =', this.isLogin);
     this.error = null;
     this.clearFields();
   }
@@ -43,6 +48,7 @@ export class LoginPage {
     this.registerName = '';
     this.registerEmail = '';
     this.registerPassword = '';
+    console.log('Campos limpos');
   }
 
   login() {
@@ -52,14 +58,19 @@ export class LoginPage {
     }
 
     this.loading = true;
+    this.error = null;
+
     this.auth.login(this.loginEmail, this.loginPassword).subscribe({
-      next: () => {
+      next: (res: any) => {
         this.loading = false;
+        localStorage.setItem('token', res.token);  // Guarda o token
+        console.log('Login bem-sucedido, token armazenado:', res.token);
         this.router.navigate(['/chat-dashboard']);
       },
-      error: (err) => {
+      error: (err: any) => {
         this.loading = false;
-        this.error = err.error?.message || 'Erro ao autenticar';
+        this.error = 'Não foi possível conectar ao servidor. Por favor, espera pelo backend.';
+        console.log('Erro no login (debug):', err);
       }
     });
   }
@@ -71,15 +82,21 @@ export class LoginPage {
     }
 
     this.loading = true;
-    this.auth.register(this.registerEmail, this.registerPassword, this.registerName).subscribe({
-      next: () => {
-        this.loading = false;
-        this.toggleAuth(); // volta para login
-      },
-      error: (err) => {
-        this.loading = false;
-        this.error = err.error?.message || 'Erro ao registar';
-      }
-    });
+    this.error = null;
+
+    this.auth.register(this.registerEmail, this.registerPassword, this.registerName)
+      .subscribe({
+        next: (res: any) => {
+          this.loading = false;
+          localStorage.setItem('token', res.token);  // Guarda o token
+          console.log('Registo bem-sucedido, token armazenado:', res.token);
+          this.router.navigate(['/chat-dashboard']);
+        },
+        error: (err: any) => {
+          this.loading = false;
+          this.error = 'Não foi possível conectar ao servidor. Por favor, espera pelo backend.';
+          console.log('Erro no registo (debug):', err);
+        }
+      });
   }
 }
