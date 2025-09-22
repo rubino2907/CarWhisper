@@ -53,7 +53,7 @@ export class ChatDashboard {
   countries: string[] = ["US", "UK", "DE"];
 
   selectedChat: ChatCard | null = null;
-  chatMessages: {from: 'user' | 'bot', message: string}[] = [];
+  chatMessages: { from: 'user' | 'bot'; message: string; time: Date }[] = [];
 
   activeSection: 'chats' | 'predictor' = 'chats';
 
@@ -82,9 +82,14 @@ export class ChatDashboard {
     this.selectedChat = chat;
     this.showPredictor = false;
     this.chatMessages = [
-      { from: 'bot', message: 'Olá! Eu sou o CarWhisper, fala-me do teu carro 🚗' }
+      { 
+        from: 'bot', 
+        message: 'Olá! Eu sou o CarWhisper, fala-me do teu carro 🚗',
+        time: new Date()  // ⬅️ Adicionado
+      }
     ];
   }
+
 
   closeChat() {
     this.selectedChat = null;
@@ -107,10 +112,15 @@ export class ChatDashboard {
     this.openChat(newChat);
   }
 
-  sendMessage(inputValue: string) {
+    sendMessage(inputValue: string) {
     if (!inputValue) return;
-    this.chatMessages.push({ from: 'user', message: inputValue });
+    this.chatMessages.push({
+      from: 'user',
+      message: inputValue,
+      time: new Date()  // ⬅️ hora
+    });
   }
+
 
   // Ao clicar no botão Value Predictor
   openValuePredictor() {
@@ -137,37 +147,46 @@ export class ChatDashboard {
   }
 
   submitPredictor() {
-    const request = { features: { ...this.predictorData } };
+  const request = { features: { ...this.predictorData } };
 
-    this.chatMessages.push({
-      from: 'user',
-      message: `Enviei as features do carro 🚙:\n${JSON.stringify(request.features, null, 2)}`
-    });
+  // Mostra o envio pelo user
+  this.chatMessages.push({
+    from: 'user',
+    message: `Enviei as features do carro 🚙:\n${JSON.stringify(request.features, null, 2)}`,
+    time: new Date()
+  });
 
-    this.chatMessages.push({
-      from: 'bot',
-      message: 'Recebi as informações, a processar...'
-    });
+  // Mensagem inicial do bot
+  this.chatMessages.push({
+    from: 'bot',
+    message: 'Recebi as informações, a processar...',
+    time: new Date()
+  });
 
-    fetch('api/predict', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(request)
-    })
-      .then(res => res.json())
-      .then(data => {
-        this.chatMessages.push({
-          from: 'bot',
-          message: `Resposta da API: ${JSON.stringify(data, null, 2)}`
-        });
-        this.showPredictor = false;
-      })
-      .catch(err => {
-        this.chatMessages.push({
-          from: 'bot',
-          message: `Erro ao enviar para a API: ${err}`
-        });
-        console.error(err);
+  fetch('api/predict', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(request)
+  })
+    .then(res => res.json())
+    .then(data => {
+      // Aqui assumimos que a API retorna algo como { price: 12345 }
+      const price = data.price ?? 'N/A';
+      this.chatMessages.push({
+        from: 'bot',
+        message: `O preço estimado do carro é: $${price}`,
+        time: new Date()
       });
+      this.showPredictor = false;
+    })
+    .catch(err => {
+      this.chatMessages.push({
+        from: 'bot',
+        message: `Erro ao enviar para a API: ${err}`,
+        time: new Date()
+      });
+      console.error(err);
+    });
   }
+
 }

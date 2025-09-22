@@ -290,6 +290,10 @@
   background: #fff;
 }
 
+.messages .message-item {
+  margin-bottom: 12px;
+}
+
 .messages .user,
 .messages .bot {
   padding: 12px 16px;
@@ -298,21 +302,36 @@
   word-wrap: break-word;
   font-size: 14px;
   line-height: 1.4;
-  box-shadow:0 2px 6px rgba(0,0,0,0.04);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
 }
 
 .messages .user {
   align-self: flex-end;
-  background:#1C3D72;
-  color:white;
-  border-radius: 18px 18px 4px 18px;
+  background: #dbe7ff; /* azul pastel suave, distinto do bot */
+  color: #1C3D72;      /* mesmo tom do texto do bot para consistência */
+  border-radius: 18px 18px 4px 18px; /* mantém a forma “flechada” */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08); /* sombra leve */
+  padding: 12px 16px;   /* garante espaço interno */
+  max-width: 70%;       /* evita que a mensagem ocupe toda a largura */
 }
 
 .messages .bot {
   align-self: flex-start;
-  background:#E4EBF8;
-  color:#1C3D72;
+  background: #E4EBF8;
+  color: #1C3D72;
   border-radius: 18px 18px 18px 4px;
+}
+
+.messages .message-text {
+  display: block;
+  margin-top: 4px; /* separa do nome */
+}
+
+.messages .message-time {
+  font-size: 10px;
+  color: rgba(0,0,0,0.5);
+  margin-top: 6px;
+  margin-left: 2px; /* pequena margem à esquerda */
 }
 
 /* --- Input de mensagem --- */
