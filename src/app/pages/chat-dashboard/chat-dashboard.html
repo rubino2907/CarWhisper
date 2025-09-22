@@ -1,4 +1,3 @@
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <div class="page">
@@ -15,53 +14,52 @@
     </div>
 
     <nav class="menu">
-      <button class="active">
-        <i class="fa-solid fa-message"></i>
-        Chats ({{ chats.length }})
-      </button>
-    </nav>
+    <button [class.active]="activeSection === 'chats'" (click)="openChats()">
+      <i class="fa-solid fa-message"></i>
+      Chats ({{ chats.length }})
+    </button>
+
+    <button [class.active]="activeSection === 'predictor'" (click)="openValuePredictor()">
+      <i class="fa-solid fa-chart-line"></i>
+      Value Predictor
+    </button>
+  </nav>
+
 
     <div class="pinned">
       <h4>Pinned</h4>
       <ul>
         <li>Modelo: gpt 3.5 turbo</li>
-        <li>Dataset: 1.1 Miliones of cars ( US UK DE) </li>
+        <li>Dataset: 1.1 Milhões of cars ( US UK DE) </li>
       </ul>
     </div>
 
-    
-    <div class="history">
-    <h4>Chat History</h4>
-    <ul>
-      <li 
-        *ngFor="let c of chats" 
-        (click)="openChat(c)" 
-        class="history-item">
-        
-        <div class="history-top">
-          <span class="chat-model">{{ c.model }}</span>
-          <small class="chat-date">{{ c.date }}</small>
-        </div>
-        <p class="last-msg">{{ c.lastMessage }}</p>
-      </li>
-    </ul>
-  </div>
+    <div class="history" *ngIf="!showPredictor">
+      <h4>Chat History</h4>
+      <ul>
+        <li 
+          *ngFor="let c of chats" 
+          (click)="openChat(c)" 
+          class="history-item">
+          
+          <div class="history-top">
+            <span class="chat-model">{{ c.model }}</span>
+            <small class="chat-date">{{ c.date }}</small>
+          </div>
+          <p class="last-msg">{{ c.lastMessage }}</p>
+        </li>
+      </ul>
+    </div>
 
-    <button class="new-chat" (click)="createNewChat()">+ Start new chat</button>
-    
+    <button class="new-chat" (click)="createNewChat()" *ngIf="!showPredictor">+ Start new chat</button>
   </aside>
 
   <!-- Main content -->
   <main class="content">
 
-    <!-- Controls -->
-    <section class="controls" *ngIf="!selectedChat">
-      <div class="left">Chats ({{ chats.length }})</div>
-    </section>
-
     <!-- Lista de chats -->
-    <section class="grid" *ngIf="!selectedChat">
-            <article 
+    <section class="grid" *ngIf="activeSection === 'chats' && !selectedChat">
+      <article 
         class="card" 
         *ngFor="let c of chats; let i = index" 
         (click)="openChat(c)">
@@ -75,8 +73,6 @@
 
         <div class="card-foot">
           <span>💬 {{ c.replies }}</span>
-
-          <!-- botão delete -->
           <button 
             class="delete-btn" 
             (click)="deleteChat(i); $event.stopPropagation()">
@@ -84,19 +80,13 @@
           </button>
         </div>
       </article>
-
     </section>
 
+    <!-- Chat view -->
     <section class="chat-view" *ngIf="selectedChat">
       <button (click)="closeChat()">← Back to chats</button>
       <h3>Chat com {{ selectedChat.model }}</h3>
 
-      <!-- botão para abrir popup -->
-      <button class="open-popup" (click)="showPopup = true">
-        ➕ Adicionar features
-      </button>
-
-      <!-- mensagens -->
       <div class="messages">
         <div *ngFor="let msg of chatMessages" [ngClass]="msg.from">
           <strong *ngIf="msg.from==='user'">You:</strong>
@@ -105,60 +95,94 @@
         </div>
       </div>
 
-      <!-- input normal do chat -->
       <div class="chat-input">
         <input #msgInput placeholder="Escreve a tua mensagem..." />
         <button class="send-btn" (click)="sendMessage(msgInput.value); msgInput.value=''">Enviar</button>
       </div>
     </section>
 
-    <!-- POPUP -->
-    <div class="popup-backdrop" *ngIf="showPopup">
-      <div class="popup">
-        <h3>Adicionar Features</h3>
-        <form (ngSubmit)="submitFeatures()">
+    <!-- Value Predictor step-by-step -->
+    <section class="predictor-view" *ngIf="activeSection === 'predictor'">
+      <h3>Value Predictor</h3>
+
+      <div class="predictor-progress">
+        Passo {{ predictorStep + 1 }} / {{ predictorSteps.length }} —
+        {{ predictorSteps[predictorStep] }}
+      </div>
+
+      <form (ngSubmit)="submitPredictor()" #predictorForm="ngForm">
+
+        <!-- Passo 1 -->
+        <div *ngIf="predictorStep === 0" class="step">
+          <label>Manufacturer</label>
+          <select name="manufacturer" [(ngModel)]="predictorData.manufacturer" required>
+            <option value="" disabled selected>Escolhe...</option>
+            <option *ngFor="let b of manufacturers" [value]="b">{{ b }}</option>
+          </select>
 
           <label>Model</label>
-          <input type="text" [(ngModel)]="newFeature.model" name="model" required />
+          <input name="model" [(ngModel)]="predictorData.model" required />
 
           <label>Year</label>
-          <input type="number" [(ngModel)]="newFeature.year" name="year" required />
+          <input type="number" name="year" [(ngModel)]="predictorData.year" required min="1900" max="2099" />
+        </div>
+
+        <!-- Passo 2 -->
+        <div *ngIf="predictorStep === 1" class="step">
+          <label>Odometer (km)</label>
+          <input type="number" name="odometer" [(ngModel)]="predictorData.odometer" />
 
           <label>Transmission</label>
-          <select [(ngModel)]="newFeature.transmission" name="transmission">
+          <select name="transmission" [(ngModel)]="predictorData.transmission">
             <option value="automatic">Automatic</option>
             <option value="manual">Manual</option>
           </select>
+        </div>
 
-          <label>Odometer</label>
-          <input type="number" [(ngModel)]="newFeature.odometer" name="odometer" />
-
+        <!-- Passo 3 -->
+        <div *ngIf="predictorStep === 2" class="step">
           <label>Fuel</label>
-          <select [(ngModel)]="newFeature.fuel" name="fuel">
+          <select name="fuel" [(ngModel)]="predictorData.fuel">
             <option value="gas">Gas</option>
             <option value="diesel">Diesel</option>
             <option value="electric">Electric</option>
           </select>
 
-          <label>Manufacturer</label>
-          <select [(ngModel)]="newFeature.manufacturer" name="manufacturer">
-            <option *ngFor="let brand of manufacturers" [value]="brand">{{ brand }}</option>
-          </select>
-
           <label>Country</label>
-          <select [(ngModel)]="newFeature.country" name="country">
+          <select name="country" [(ngModel)]="predictorData.country">
+            <option value="" disabled selected>Escolhe...</option>
             <option *ngFor="let c of countries" [value]="c">{{ c }}</option>
           </select>
+        </div>
 
-          <div class="popup-actions">
-            <button type="button" (click)="closePopup()">Cancelar</button>
-            <button type="submit">Guardar</button>
-          </div>
-        </form>
-      </div>
-    </div>
+        <!-- Passo 4 -->
+        <div *ngIf="predictorStep === 3" class="step">
+          <h4>Revisão</h4>
+          <p><strong>Manufacturer:</strong> {{ predictorData.manufacturer }}</p>
+          <p><strong>Model:</strong> {{ predictorData.model }}</p>
+          <p><strong>Year:</strong> {{ predictorData.year }}</p>
+          <p><strong>Odometer:</strong> {{ predictorData.odometer || '—' }}</p>
+          <p><strong>Transmission:</strong> {{ predictorData.transmission }}</p>
+          <p><strong>Fuel:</strong> {{ predictorData.fuel }}</p>
+          <p><strong>Country:</strong> {{ predictorData.country }}</p>
+        </div>
 
+        <!-- Botões Next / Back / Submit -->
+        <div class="step-actions">
+          <button type="button" (click)="prevStep()" [disabled]="predictorStep === 0">Back</button>
 
+          <button type="button"
+                  *ngIf="predictorStep < predictorSteps.length - 1"
+                  (click)="nextStep()"
+                  [disabled]="!predictorForm.form.valid">
+            Next
+          </button>
 
+          <button type="submit" *ngIf="predictorStep === predictorSteps.length - 1" [disabled]="!predictorForm.form.valid">
+            Predict
+          </button>
+        </div>
+      </form>
+    </section>
   </main>
 </div>
