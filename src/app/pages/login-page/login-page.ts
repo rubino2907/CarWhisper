@@ -7,7 +7,7 @@ import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-login-page',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ],
   templateUrl: './login-page.html',
   styleUrls: ['./login-page.css']
 })
@@ -17,7 +17,7 @@ export class LoginPage {
   error: string | null = null;
 
   // Login
-  loginEmail = '';
+  loginUsername = '';
   loginPassword = '';
 
   // Registo
@@ -43,7 +43,7 @@ export class LoginPage {
   }
 
   private clearFields() {
-    this.loginEmail = '';
+    this.loginUsername = '';
     this.loginPassword = '';
     this.registerName = '';
     this.registerEmail = '';
@@ -52,7 +52,7 @@ export class LoginPage {
   }
 
   login() {
-    if (!this.loginEmail || !this.loginPassword) {
+    if (!this.loginUsername || !this.loginPassword) {
       this.error = 'Por favor, preencha todos os campos.';
       return;
     }
@@ -60,10 +60,10 @@ export class LoginPage {
     this.loading = true;
     this.error = null;
 
-    this.auth.login(this.loginEmail, this.loginPassword).subscribe({
+    this.auth.login(this.loginUsername, this.loginPassword).subscribe({
       next: (res: any) => {
         this.loading = false;
-        localStorage.setItem('token', res.token);  // Guarda o token
+        localStorage.setItem('token', res.access_token);  // Guarda o token
         console.log('Login bem-sucedido, token armazenado:', res.token);
         this.router.navigate(['/chat-dashboard']);
       },

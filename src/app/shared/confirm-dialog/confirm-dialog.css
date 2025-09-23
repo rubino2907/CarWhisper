@@ -1,46 +1,87 @@
+/* fundo escuro elegante */
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(17, 24, 39, 0.6); /* mesmo tom usado no .popup */
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  animation: fadeIn 0.25s ease;
 }
 
+/* caixa central */
 .dialog {
   background: #fff;
-  border-radius: 12px;
-  padding: 20px;
-  width: 300px;
+  border-radius: 16px; /* igual às popups principais */
+  padding: 28px 24px;
+  width: 360px;
+  max-width: 90%;
   text-align: center;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  animation: fadeIn 0.2s ease-in-out;
+  box-shadow: 0 8px 32px rgba(15, 23, 42, 0.15);
+  animation: slideUp 0.25s ease;
+  font-family: 'Inter', sans-serif;
+}
+
+/* título opcional */
+.dialog h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 1.25rem;
+  color: #1C3D72;
+  font-weight: 600;
+}
+
+/* mensagem */
+.dialog p {
+  font-size: 0.95rem;
+  color: #374151;
+  margin: 0;
 }
 
 .actions {
-  margin-top: 20px;
+  margin-top: 24px;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between; /* 👈 distribui os botões nas extremidades */
+  gap: 12px;
 }
 
-button {
-  padding: 8px 16px;
-  border-radius: 8px;
+.actions button {
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-weight: 500;
   border: none;
   cursor: pointer;
+  transition: 0.2s;
+  font-family: 'Inter', sans-serif;
+  flex: 1; /* 👈 opcional, para botões terem tamanho igual */
 }
 
-.cancel {
-  background: #ccc;
+.actions .cancel {
+  background: #E4EBF8;
+  color: #1C3D72;
 }
 
-.confirm {
-  background: #d9534f;
+.actions .cancel:hover {
+  background: #d1d5db;
+}
+
+.actions .confirm {
+  background: linear-gradient(90deg, #d9534f, #b52a25);
   color: white;
 }
 
+.actions .confirm:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* animações */
 @keyframes fadeIn {
-  from { transform: scale(0.9); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }

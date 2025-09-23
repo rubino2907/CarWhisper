@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 
 export interface AuthResponse {
@@ -12,18 +12,24 @@ export interface AuthResponse {
   providedIn: 'root'
 })
 export class AuthService {
-  // Ajusta esta URL para o endpoint do teu backend / Stych
-  private base = '/api/auth';
+  private http = inject(HttpClient);   // 👈 injeta diretamente
+  private base = '/auth';
 
-  constructor(private http: HttpClient) {}
+  login(username: string, password: string): Observable<AuthResponse> {
+    const body = new URLSearchParams();
+    body.set('username', username);
+    body.set('password', password);
 
-  login(email: string, password: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.base}/login`, { email, password })
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/x-www-form-urlencoded'
+    });
+
+    return this.http.post<AuthResponse>(`${this.base}/token`, body.toString(), { headers })
       .pipe(tap(res => this.saveTokens(res)));
   }
 
-  register(email: string, password: string, name?: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.base}/register`, { email, password, name })
+  register(email: string, password: string, username?: string): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.base}/register`, { email, password, username })
       .pipe(tap(res => this.saveTokens(res)));
   }
 

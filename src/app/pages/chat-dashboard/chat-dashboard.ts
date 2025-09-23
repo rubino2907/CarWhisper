@@ -30,6 +30,16 @@ const sampleMessages = [
   imports: [CommonModule, FormsModule, ConfirmDialog ],
 })
 export class ChatDashboard {
+  token: string | null = null;
+
+  ngOnInit() {
+  if (typeof window !== 'undefined') { // ⬅️ só roda no browser
+    this.token = localStorage.getItem('token');
+    console.log('Token:', this.token);
+  }
+  }
+
+
   username = 'Ruben';
 
   showConfirm = false;
