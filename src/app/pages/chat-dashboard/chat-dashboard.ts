@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ConfirmDialog } from '../../shared/confirm-dialog/confirm-dialog';
 
 interface ChatCard {
   date: string;
@@ -26,10 +27,13 @@ const sampleMessages = [
   templateUrl: './chat-dashboard.html',
   styleUrls: ['./chat-dashboard.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ConfirmDialog ],
 })
 export class ChatDashboard {
   username = 'Ruben';
+
+  showConfirm = false;
+  confirmIndex: number | null = null;
 
   chats: ChatCard[] = Array.from({ length: 8 }).map((_, i) => ({
     date: ['Jan 24, 2024','Jan 16, 2024','Jan 12, 2024','Jan 10, 2024','Dec 26, 2023','Dec 12, 2023','Dec 1, 2023','Nov 15, 2023'][i % 8],
@@ -93,11 +97,6 @@ export class ChatDashboard {
 
   closeChat() {
     this.selectedChat = null;
-  }
-
-  deleteChat(index: number) {
-    if (this.selectedChat === this.chats[index]) this.closeChat();
-    this.chats.splice(index, 1);
   }
 
   createNewChat() {
@@ -189,4 +188,19 @@ export class ChatDashboard {
     });
   }
 
+  // Ppup Verificaçao confirmar
+
+  askDelete(index: number) {
+  this.showConfirm = true;
+  this.confirmIndex = index;
+  }
+
+  deleteChat(index: number | null) {
+    if (index !== null) {
+      if (this.selectedChat === this.chats[index]) this.closeChat();
+      this.chats.splice(index, 1);
+    }
+    this.showConfirm = false;
+    this.confirmIndex = null;
+  }
 }

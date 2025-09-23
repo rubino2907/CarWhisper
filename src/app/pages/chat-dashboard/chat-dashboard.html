@@ -73,7 +73,7 @@
         <div class="card-foot">
           <button 
             class="delete-btn" 
-            (click)="deleteChat(i); $event.stopPropagation()">
+            (click)="askDelete(i); $event.stopPropagation()">
             🗑️
           </button>
         </div>
@@ -188,5 +188,18 @@
         </div>
       </form>
     </section>
+
   </main>
+
+    <!-- Popup de confirmação -->
+    <app-confirm-dialog
+      *ngIf="showConfirm"
+      title="Eliminar Chat"
+      message="Tem a certeza que deseja eliminar este chat?"
+      confirmText="Eliminar"
+      cancelText="Cancelar"
+      (confirmed)="deleteChat(confirmIndex)"
+      (cancelled)="showConfirm = false">
+    </app-confirm-dialog>
+
 </div>
