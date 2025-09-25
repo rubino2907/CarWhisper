@@ -1,6 +1,6 @@
 {
   "/auth": {
-    "target": "https://c3ce68cc0805.ngrok-free.app/",
+    "target": "https://cda4f38a04db.ngrok-free.app/",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug"
