@@ -7,11 +7,14 @@ import { NgZone } from '@angular/core';
 
 
 interface ChatCard {
-  date: string;
-  excerpt: string;
-  model?: string;
-  lastMessage: string;
+  id: number;
+  title: string;
+  created_at: string;
+  user_id: number;
+  model?: string;       // opcional, se depois quiseres usar
+  lastMessage?: string; // opcional
 }
+
 
 @Component({
   selector: 'app-chat-dashboard',
@@ -30,6 +33,7 @@ export class ChatDashboard {
 
   async ngOnInit() {
     await this.loadUser();
+    await this.loadUserChats();
   }
 
   // ========================
@@ -46,7 +50,7 @@ export class ChatDashboard {
   // ========================
 
   constructor(private ngZone: NgZone) {}
-  
+
   private async loadUser(): Promise<void> {
     const token = localStorage.getItem("token");
     if (!token) return;
@@ -79,17 +83,36 @@ export class ChatDashboard {
   selectedChat: ChatCard | null = null;
   chatMessages: { from: 'user' | 'bot'; message: string; time: Date }[] = [];
 
-/* loadUserChats() {
-    if (!this.userId) return;
+  // Carregar chats
+    private async loadUserChats(): Promise<void> {
+    const token = localStorage.getItem("token");
+    if (!token) return;
 
-    fetch(`/api/chats?userId=${this.userId}`, {
-      headers: { 'Authorization': `Bearer ${this.token}` }
-    })
-      .then(res => res.json())
-      .then((data: ChatCard[]) => this.chats = data)
-      .catch(err => console.error('Erro ao carregar chats:', err));
+    try {
+      const res = await fetch("http://127.0.0.1:8000/api/chats/userchats", {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        }
+      });
+
+      if (!res.ok) return;
+
+      const data = await res.json();
+      this.ngZone.run(() => {
+        // Mapear cada chat para garantir valores por defeito
+        this.chats = data.Chats.map((chat: any) => ({
+          ...chat,
+          model: chat.model || 'CarModel',
+          lastMessage: chat.lastMessage || 'Sem mensagens ainda'
+        }));
+      });
+    } catch (err) {
+      console.error(err);
+    }
   }
-*/
+
+
 
 /* createNewChat(title: string = 'Nova conversa') {
     fetch('/api/chats/create', {

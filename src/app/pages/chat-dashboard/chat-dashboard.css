@@ -148,10 +148,18 @@
 }
 
 .chat-model {
-  font-weight: 600;
-  font-size: 0.85rem;
-  color: #1C3D72;
+  font-weight: 700;                 /* Mais destacado */
+  font-size: 0.9rem;                /* Ligeiramente maior */
+  color: #1C3D72;                   /* Mantém o azul escuro */
+  text-transform: uppercase;        /* Dá sensação de etiqueta / badge */
+  letter-spacing: 0.5px;            /* Espaço subtil entre letras */
+  background: #E4EBF8;              /* Fundo suave para destaque */
+  padding: 2px 6px;                 /* Pequeno espaço interno */
+  border-radius: 8px;               /* Bordas arredondadas para modernidade */
+  display: inline-block;            /* Mantém o tamanho do conteúdo */
+  box-shadow: 0 2px 6px rgba(28,61,114,0.1); /* Subtile profundidade */
 }
+
 
 .chat-date {
   font-size: 0.75rem;
@@ -159,12 +167,15 @@
 }
 
 .last-msg {
-  font-size: 0.8rem;
-  color: #374151;
+  font-size: 0.85rem;          /* ligeiramente maior para melhor leitura */
+  color: #4B5563;              /* tom cinza-escuro mais suave e moderno */
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: block;
+  max-width: 100%;             /* garante que respeita o container */
+  transition: color 0.2s;      /* transição suave no hover */
 }
 
 .new-chat { 
@@ -219,14 +230,21 @@
   align-items:center; 
   margin-bottom:8px; 
 }
+
 .badge { 
-  background:#E4EBF8; 
-  color:#1C3D72;
-  padding:6px 10px; 
-  border-radius:12px; 
-  font-size:12px; 
-  font-weight:500;
+  background: linear-gradient(135deg, #E4EBF8, #D0D9F5); /* leve degradê para mais profundidade */
+  color: #1C3D72; 
+  padding: 6px 12px; 
+  border-radius: 14px; 
+  font-size: 0.75rem; /* ligeiramente menor e mais elegante */
+  font-weight: 600; 
+  letter-spacing: 0.5px; 
+  text-transform: uppercase; 
+  display: inline-block; 
+  box-shadow: 0 2px 6px rgba(28,61,114,0.1); /* sutil profundidade */
+  transition: transform 0.2s, box-shadow 0.2s;
 }
+
 .card-foot { 
   display:flex; 
   justify-content:space-between; 

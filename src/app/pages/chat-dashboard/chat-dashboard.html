@@ -42,9 +42,9 @@
           
           <div class="history-top">
             <span class="chat-model">{{ c.model }}</span>
-            <small class="chat-date">{{ c.date }}</small>
+            <small class="chat-date">{{ c.created_at | date:'short' }}</small>
           </div>
-          <p class="last-msg">{{ c.lastMessage }}</p>
+          <p class="last-msg">{{ c.title || 'Sem mensagens ainda' }}</p>
         </li>
       </ul>
     </div>
@@ -63,11 +63,11 @@
         (click)="openChat(c)">
         
         <div class="card-head">
-          <small>{{ c.date }}</small>
+          <small>{{ c.created_at | date:'short' }}</small>
           <span class="badge">{{ c.model }}</span>
         </div>
 
-        <p class="excerpt">{{ c.excerpt }}</p>
+        <p class="excerpt">{{ c.title }}</p>
 
         <div class="card-foot">
           <button 
@@ -77,6 +77,7 @@
           </button>
         </div>
       </article>
+
     </section>
 
     <!-- Chat view -->
