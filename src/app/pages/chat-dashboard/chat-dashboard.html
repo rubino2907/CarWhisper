@@ -3,9 +3,8 @@
 <div class="page">
   <!-- Sidebar -->
   <aside class="sidebar">
-    <div class="profile"> 
-      <div class="name">Ruben Costa</div>
-      <div class="icons">⚙️</div>
+    <div>
+      <p class="name">{{ username || 'Carregando...' }}</p>
     </div>
 
     <div class="search">
@@ -50,7 +49,7 @@
       </ul>
     </div>
 
-    <button class="new-chat" (click)="createNewChat()" *ngIf="!showPredictor">+ Start new chat</button>
+    <!-- <button class="new-chat" (click)="createNewChat()" *ngIf="!showPredictor">+ Start new chat</button> -->
   </aside>
 
   <!-- Main content -->

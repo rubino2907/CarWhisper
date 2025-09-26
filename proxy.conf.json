@@ -1,8 +1,0 @@
-{
-  "/auth": {
-    "target": "https://cda4f38a04db.ngrok-free.app/",
-    "secure": false,
-    "changeOrigin": true,
-    "logLevel": "debug"
-  }
-}

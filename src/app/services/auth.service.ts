@@ -13,7 +13,7 @@ export interface AuthResponse {
 })
 export class AuthService {
   private http = inject(HttpClient);   // 👈 injeta diretamente
-  private base = '/auth';
+  private base = 'http://127.0.0.1:8000/auth';
 
   login(username: string, password: string): Observable<AuthResponse> {
     const body = new URLSearchParams();
@@ -24,12 +24,12 @@ export class AuthService {
       'Content-Type': 'application/x-www-form-urlencoded'
     });
 
-    return this.http.post<AuthResponse>(`${this.base}/token`, body.toString(), { headers })
+    return this.http.post<AuthResponse>(`${this.base}/signin`, body.toString(), { headers })
       .pipe(tap(res => this.saveTokens(res)));
   }
 
   register(email: string, password: string, username?: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.base}/register`, { email, password, username })
+    return this.http.post<AuthResponse>(`${this.base}/signup`, { email, password, username })
       .pipe(tap(res => this.saveTokens(res)));
   }
 

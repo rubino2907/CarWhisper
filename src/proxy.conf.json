@@ -1,0 +1,14 @@
+{
+  "/auth": {
+    "target": "https://46a5353024eb.ngrok-free.app/",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/api": {
+    "target": "https://46a5353024eb.ngrok-free.app/",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}
