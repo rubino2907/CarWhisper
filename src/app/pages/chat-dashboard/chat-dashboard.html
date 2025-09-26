@@ -49,7 +49,7 @@
       </ul>
     </div>
 
-    <!-- <button class="new-chat" (click)="createNewChat()" *ngIf="!showPredictor">+ Start new chat</button> -->
+    <button class="new-chat" (click)="openNewChatPopup()" *ngIf="!showPredictor">+ Start new chat</button> 
   </aside>
 
   <!-- Main content -->
@@ -201,5 +201,12 @@
       (confirmed)="deleteChat(confirmIndex)"
       (cancelled)="showConfirm = false">
     </app-confirm-dialog>
+
+    <!-- Popup de criação de chat -->
+    <app-new-chat-dialog 
+      *ngIf="showNewChatPopup"
+      (confirmed)="onChatCreated($event)"
+      (cancelled)="cancelNewChat()">
+    </app-new-chat-dialog>
 
 </div>

@@ -1,0 +1,11 @@
+<!-- shared/new-chat-dialog/new-chat-dialog.html -->
+<div class="popup">
+  <div class="popup-content">
+    <h3>Criar Novo Chat</h3>
+    <input [(ngModel)]="chatTitle" placeholder="Nome do chat" />
+    <div class="popup-actions">
+      <button (click)="cancel()">Cancelar</button>
+      <button (click)="confirm()" [disabled]="!chatTitle.trim()">Criar</button>
+    </div>
+  </div>
+</div>

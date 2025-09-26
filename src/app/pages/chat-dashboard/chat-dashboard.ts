@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ConfirmDialog } from '../../shared/confirm-dialog/confirm-dialog';
-import { Observable } from 'rxjs';
+import { NewChatDialog } from '../../shared/new-chat-dialog/new-chat-dialog';
 import { NgZone } from '@angular/core';
 
 
@@ -21,7 +21,7 @@ interface ChatCard {
   templateUrl: './chat-dashboard.html',
   styleUrls: ['./chat-dashboard.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule, ConfirmDialog ],
+  imports: [CommonModule, FormsModule, ConfirmDialog, NewChatDialog ],
 })
 
 export class ChatDashboard {
@@ -81,53 +81,69 @@ export class ChatDashboard {
 
   chats: ChatCard[] = [];
   selectedChat: ChatCard | null = null;
+  showNewChatPopup = false;
   chatMessages: { from: 'user' | 'bot'; message: string; time: Date }[] = [];
 
-  // Carregar chats
-    private async loadUserChats(): Promise<void> {
-    const token = localStorage.getItem("token");
-    if (!token) return;
+  private async loadUserChats(): Promise<void> {
+  const token = localStorage.getItem("token");
+  if (!token) return;
 
-    try {
-      const res = await fetch("http://127.0.0.1:8000/api/chats/userchats", {
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        }
-      });
+  try {
+    const res = await fetch("http://127.0.0.1:8000/api/chats/userchats", {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      }
+    });
 
-      if (!res.ok) return;
+    if (!res.ok) return;
 
-      const data = await res.json();
-      this.ngZone.run(() => {
-        // Mapear cada chat para garantir valores por defeito
-        this.chats = data.Chats.map((chat: any) => ({
-          ...chat,
-          model: chat.model || 'CarModel',
-          lastMessage: chat.lastMessage || 'Sem mensagens ainda'
-        }));
-      });
-    } catch (err) {
-      console.error(err);
-    }
+    const data = await res.json();
+    this.ngZone.run(() => {
+      this.chats = data.Chats.map((chat: any) => ({
+        ...chat,
+        model: chat.model || 'CarModel',
+        lastMessage: chat.lastMessage || 'Sem mensagens ainda'
+      }));
+    });
+  } catch (err) {
+    console.error(err);
+  }
   }
 
+async createNewChat(title: string) {
+  const token = localStorage.getItem("token");
+  if (!token || !title.trim()) return;
 
-
-/* createNewChat(title: string = 'Nova conversa') {
-    fetch('/api/chats/create', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${this.token}` },
+  try {
+    const res = await fetch("http://127.0.0.1:8000/api/chats/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
       body: JSON.stringify({ title })
-    })
-      .then(res => res.json())
-      .then((newChat: ChatCard) => {
-        this.chats = [newChat, ...this.chats];
-        this.openChat(newChat);
-      })
-      .catch(err => console.error('Erro ao criar chat:', err));
+    });
+
+    if (!res.ok) throw new Error('Erro ao criar chat');
+
+    const newChat: ChatCard = await res.json();
+
+    if (!newChat.model) newChat.model = "CarModel";
+
+    // 1️⃣ Abre o chat imediatamente
+    this.ngZone.run(() => {
+      this.openChat(newChat);
+      this.chats = [newChat, ...this.chats]; // adiciona provisoriamente no topo
+    });
+
+    // 2️⃣ Atualiza a lista completa em background
+    this.loadUserChats(); // não await, só para atualizar o array depois
+
+  } catch (err) {
+    console.error('Erro ao criar chat:', err);
   }
-*/
+}
 
   openChat(chat: ChatCard) {
     this.selectedChat = chat;
@@ -163,6 +179,19 @@ export class ChatDashboard {
   openChats() {
     this.activeSection = 'chats';
     this.selectedChat = null;
+  }
+
+  openNewChatPopup() {
+  this.showNewChatPopup = true;
+  }
+
+  onChatCreated(title: string) {
+    this.createNewChat(title);
+    this.showNewChatPopup = false;
+  }
+
+  cancelNewChat() {
+    this.showNewChatPopup = false;
   }
 
   // ========================

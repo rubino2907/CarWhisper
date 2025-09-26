@@ -1,0 +1,24 @@
+/* shared/new-chat-dialog/new-chat-dialog.css */
+.popup {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.popup-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  width: 300px;
+  text-align: center;
+}
+
+.popup-actions {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+}
