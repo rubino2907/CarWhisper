@@ -148,19 +148,23 @@ async createNewChat(title: string) {
   openChat(chat: ChatCard) {
     this.selectedChat = chat;
     this.showPredictor = false;
-    this.chatMessages = [{
-      from: 'bot',
+
+    // Mensagem inicial fixa do bot
+    const botMessage: { from: 'user' | 'bot'; message: string; time: Date } = {
+      from: 'bot', 
       message: 'Olá! Eu sou o CarWhisper, fala-me do teu carro 🚗',
       time: new Date()
-    }];
+    };
+
+    // Mantém mensagens anteriores ou inicia com a do bot
+    this.chatMessages = [botMessage];
+
+    // Carrega mensagens do backend
+    this.loadChatMessages(chat.id);
   }
+
 
   closeChat() { this.selectedChat = null; }
-
-  sendMessage(inputValue: string) {
-    if (!inputValue) return;
-    this.chatMessages.push({ from: 'user', message: inputValue, time: new Date() });
-  }
 
   askDelete(index: number) {
     this.showConfirm = true;
@@ -192,6 +196,97 @@ async createNewChat(title: string) {
 
   cancelNewChat() {
     this.showNewChatPopup = false;
+  }
+
+  // ========================
+  // Messages
+  // ========================
+  async loadChatMessages(chatId: number) {
+  const token = localStorage.getItem("token");
+  if (!token) return;
+
+  try {
+    const res = await fetch(`http://127.0.0.1:8000/api/messages/chat/${chatId}`, {
+      headers: { 
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}` 
+      }
+    });
+    if (!res.ok) throw new Error('Erro ao carregar mensagens');
+
+    const data = await res.json();
+
+    this.ngZone.run(() => {
+      // Garante a mensagem inicial do bot
+      const botMessage = {
+        from: 'bot',
+        message: 'Olá! Eu sou o CarWhisper, fala-me do teu carro 🚗',
+        time: new Date()
+      };
+
+      // Preenche chatMessages: botMessage + mensagens do backend
+      this.chatMessages = [
+        botMessage,
+        ...(data.map((m: any) => ({
+          from: m.role === 'user' ? 'user' : 'bot',
+          message: m.content,
+          time: new Date(m.created_at)
+        })) || [])
+      ];
+    });
+
+  } catch (err) {
+    console.error('Erro ao carregar mensagens:', err);
+  }
+}
+
+  
+  async sendMessage(inputValue: string) {
+    if (!inputValue || !this.selectedChat) return; // evita vazio ou chat não selecionado
+
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    const messagePayload = {
+      chat_id: this.selectedChat.id,
+      role: "user",
+      content: inputValue
+    };
+
+    try {
+      const res = await fetch("http://127.0.0.1:8000/api/messages/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(messagePayload)
+      });
+
+      if (!res.ok) throw new Error("Erro ao enviar mensagem");
+
+      const newMessage = await res.json(); // recebe a mensagem criada
+
+      this.ngZone.run(() => {
+        // adiciona a mensagem enviada localmente
+        this.chatMessages.push({
+          from: "user",
+          message: newMessage.content,
+          time: new Date(newMessage.created_at)
+        });
+      });
+
+    } catch (err) {
+      console.error(err);
+      this.ngZone.run(() => {
+        // opcional: mostra erro no chat
+        this.chatMessages.push({
+          from: "bot",
+          message: "Não foi possível enviar a mensagem 😅",
+          time: new Date()
+        });
+      });
+    }
   }
 
   // ========================
