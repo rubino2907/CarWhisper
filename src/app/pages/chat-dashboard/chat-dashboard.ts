@@ -79,6 +79,15 @@ export class ChatDashboard {
     }
   }
 
+  logout() {
+    localStorage.removeItem('token'); // ou sessionStorage, conforme usas
+    this.username = '';
+    this.selectedChat = null;
+    this.chats = [];
+    this.chatMessages = [];
+    // redireciona para login
+    window.location.href = '/login';
+  }
 
   // ========================
   // Chats
