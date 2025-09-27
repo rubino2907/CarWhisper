@@ -11,7 +11,7 @@
     </div>
 
     <div class="search">
-      <input placeholder="Search for chats..."/>
+      <input placeholder="Search for chats..." [(ngModel)]="searchTerm"/>
     </div>
 
     <nav class="menu">
@@ -62,7 +62,7 @@
     <section class="grid" *ngIf="activeSection === 'chats' && !selectedChat">
       <article 
         class="card" 
-        *ngFor="let c of chats; let i = index" 
+        *ngFor="let c of filteredChats; let i = index" 
         (click)="openChat(c)">
         
         <div class="card-head">
@@ -80,7 +80,6 @@
           </button>
         </div>
       </article>
-
     </section>
 
     <!-- Chat view -->

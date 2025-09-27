@@ -143,6 +143,17 @@ export class ChatDashboard {
     }
   }
 
+  searchTerm: string = '';
+
+  get filteredChats(): ChatCard[] {
+    if (!this.searchTerm.trim()) return this.chats;
+    const term = this.searchTerm.toLowerCase();
+    return this.chats.filter(chat =>
+      chat.title.toLowerCase().includes(term) ||
+      (chat.model && chat.model.toLowerCase().includes(term))
+    );
+  }
+
   openChat(chat: ChatCard) {
     this.selectedChat = chat;
     this.showPredictor = false;
