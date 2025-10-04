@@ -1,53 +1,52 @@
-# Multi-stage build for Angular app
-# Stage 1: Build the Angular app
-FROM node:latest AS build
+# =========================================
+# Stage 1: Build the Angular Application
+# =========================================
+# =========================================
+# Stage 1: Build the Angular Application
+# =========================================
+ARG NODE_VERSION=24.7.0-alpine
+ARG NGINX_VERSION=alpine3.22
 
-WORKDIR /usr/local/app
+# Use a lightweight Node.js image for building (customizable via ARG)
+FROM node:${NODE_VERSION} AS builder
 
-# Copy package files first for better caching
-COPY package*.json ./
+# Set the working directory inside the container
+WORKDIR /app
 
-# Install dependencies
-RUN npm install
+# Copy package-related files first to leverage Docker's caching mechanism
+COPY package.json package-lock.json ./
 
-# Copy source code
+# Install project dependencies using npm ci (ensures a clean, reproducible install)
+RUN --mount=type=cache,target=/root/.npm npm ci
+
+# Copy the rest of the application source code into the container
 COPY . .
 
-# Build the Angular app
-RUN npm run build
+# Build the Angular application
+RUN npm run build 
 
-# Debug: List what was built
-RUN ls -la /usr/local/app/dist/
-RUN ls -la /usr/local/app/dist/chat-dashboard/ || echo "chat-dashboard folder not found"
+# =========================================
+# Stage 2: Prepare Nginx to Serve Static Files
+# =========================================
 
-# Stage 2: Serve with Nginx
-FROM nginx:latest
+FROM nginxinc/nginx-unprivileged:${NGINX_VERSION} AS runner
 
-# Remove default nginx website
-RUN rm -rf /usr/share/nginx/html/*
+# Use a built-in non-root user for security best practices
+USER nginx
 
-# Copy Angular build files from build stage
-COPY --from=build /usr/local/app/dist/chat-dashboard/ /usr/share/nginx/html/
+# Step 2: Remove the default config
+RUN rm /etc/nginx/conf.d/default.conf
 
-# Debug: List what was copied
-RUN ls -la /usr/share/nginx/html/
+# Step 3: Copy your custom config
+COPY default.conf /etc/nginx/conf.d/default.conf
 
-# Create nginx config for SPA
-RUN echo 'server { \
-    listen 80; \
-    server_name localhost; \
-    root /usr/share/nginx/html; \
-    index index.html; \
-    location / { \
-        try_files $uri $uri/ /index.html; \
-    } \
-}' > /etc/nginx/conf.d/default.conf
+# Copy the static build output from the build stage to Nginx's default HTML serving directory
+COPY --chown=nginx:nginx --from=builder /app/dist/*/browser /usr/share/nginx/html
 
-# Set proper permissions
-RUN chmod -R 755 /usr/share/nginx/html
-
-# Expose port 80
+# Expose port 8080 to allow HTTP traffic
+# Note: The default NGINX container now listens on port 8080 instead of 80 
 EXPOSE 80
 
-# Start Nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Start Nginx directly with custom config
+ENTRYPOINT ["nginx", "-c", "/etc/nginx/nginx.conf"]
+CMD ["-g", "daemon off;"]
