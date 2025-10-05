@@ -11,7 +11,7 @@ export type ChatMessage = {
   providedIn: 'root'
 })
 export class MessageService {
-  private base = 'http://127.0.0.1:8000/api/messages';
+  private base = 'http://localhost:8000/api/messages';
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 

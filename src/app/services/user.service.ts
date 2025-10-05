@@ -11,7 +11,7 @@ export interface User {
   providedIn: 'root'
 })
 export class UserService {
-  private base = 'http://127.0.0.1:8000/api/users';
+  private base = 'http://localhost:8000/api/users';
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 

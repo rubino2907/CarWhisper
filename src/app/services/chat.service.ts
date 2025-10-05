@@ -5,7 +5,7 @@ import { isPlatformBrowser } from '@angular/common';
   providedIn: 'root'
 })
 export class ChatService {
-  private base = 'http://127.0.0.1:8000/api/chats';
+  private base = 'http://localhost:8000/api/chats';
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 

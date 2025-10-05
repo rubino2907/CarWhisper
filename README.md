@@ -129,13 +129,13 @@ Then uncomment the COPY nginx.conf line in the Dockerfile.
 ### 4️⃣ Build Docker Image
 
 ```bash
-docker build -t my-angular-app .
+docker build -t chat-dashboard .
 ```
 
 ### 5️⃣ Run the Container
 
 ```bash
-docker run -d -p 80:80 my-angular-app
+docker run -d -p 80:80 --name frontend chat-dashboard
 ```
 
 Now your Angular app should be accessible at http://localhost.

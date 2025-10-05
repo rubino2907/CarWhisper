@@ -13,7 +13,7 @@ export interface AuthResponse {
 })
 export class AuthService {
   private http = inject(HttpClient);   // 👈 injeta diretamente
-  private base = 'http://127.0.0.1:8000/auth';
+  private base = 'http://localhost:8000/auth';
 
   login(username: string, password: string): Observable<AuthResponse> {
     const body = new URLSearchParams();
