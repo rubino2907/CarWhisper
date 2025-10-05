@@ -180,7 +180,9 @@ echo "🌍 Your app should be available at: http://localhost"
 2. Give it execute permission:
 
    ```bash
-   chmod +x deploy.sh
+   chmod +x deploy_mac.sh
+
+   chmod +x deploy_windows
    ```
 
 3. Run it:
