@@ -185,7 +185,9 @@ echo "🌍 Your app should be available at: http://localhost"
 
 3. Run it:
    ```bash
-   ./deploy.sh
+   ./deploy_mac.sh
+   ou
+   ./deploy_windows.bat
    ```
-
+Just click on the file in the main folder
 This script will build your Angular app, create a Docker image, and start the container in one command!
