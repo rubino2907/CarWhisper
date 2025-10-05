@@ -141,3 +141,51 @@ docker run -d -p 80:80 --name frontend chat-dashboard
 Now your Angular app should be accessible at http://localhost.
 
 If you want, I can write a fully optimized multi-stage Dockerfile that builds Angular inside Docker and serves it with Nginx, so you don't need to run ng build manually every time.
+
+## Quick Deployment Script
+
+For convenience, here's a bash script that automates the entire deployment process:
+
+Save this as `deploy.sh` in your project root:
+
+```bash
+#!/bin/bash
+# ========================================
+# Simple Deployment Script for Angular + Docker
+# ========================================
+
+# Exit on error
+set -e
+
+echo "🚀 Building Angular project..."
+ng build
+
+echo "🐳 Building Docker image: chat-dashboard"
+docker build -t chat-dashboard .
+
+echo "🧹 Removing old container (if it exists)..."
+docker rm -f frontend 2>/dev/null || true
+
+echo "🏗️ Starting new container..."
+docker run -d -p 80:80 --name frontend chat-dashboard
+
+echo "✅ Deployment complete!"
+echo "🌍 Your app should be available at: http://localhost"
+```
+
+### 🔧 How to use:
+
+1. Save the file as `deploy.sh` in your project folder.
+
+2. Give it execute permission:
+
+   ```bash
+   chmod +x deploy.sh
+   ```
+
+3. Run it:
+   ```bash
+   ./deploy.sh
+   ```
+
+This script will build your Angular app, create a Docker image, and start the container in one command!
