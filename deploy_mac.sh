@@ -46,7 +46,7 @@ fi
 
 # --- Build Angular project ---
 echo -e "${CYAN}🚀 Building Angular project...${NC}"
-"$CONDA_PREFIX"/condabin/conda run -n frontend ng build || {
+"$CONDA_PREFIX"/condabin/conda run -n frontend ng build --configuration production || {
     echo -e "${RED}❌ Angular build failed.${NC}"
     read -p "Press ENTER to close..."
     exit 1

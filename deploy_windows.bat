@@ -41,7 +41,7 @@ if errorlevel 1 (
 REM --- Build Angular project ---
 echo.
 echo 🚀 Building Angular project...
-call ng build
+call ng build --configuration production
 if errorlevel 1 (
     echo ❌ Angular build failed.
     pause
