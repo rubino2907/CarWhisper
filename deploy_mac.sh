@@ -25,10 +25,10 @@ conda env list || true
 echo
 
 # --- Activate frontend environment ---
-echo -e "${YELLOW}🐍 Activating Conda environment 'frontend'...${NC}"
+echo -e "${YELLOW}🐍 Activating Conda environment 'frontend-carbuyer'...${NC}"
 CONDA_PREFIX=$(conda info --base)
-"$CONDA_PREFIX"/condabin/conda activate frontend || {
-    echo -e "${RED}❌ Failed to activate Conda environment 'frontend'.${NC}"
+conda activate frontend-carbuyer || {
+    echo -e "${RED}❌ Failed to activate Conda environment 'frontend-carbuyer'.${NC}"
     echo "👉 Make sure you ran 'conda init bash' and restarted Git Bash."
     read -p "Press ENTER to close..."
     exit 1
