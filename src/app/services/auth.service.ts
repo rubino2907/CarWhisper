@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface AuthResponse {
   token: string;
@@ -12,8 +13,8 @@ export interface AuthResponse {
   providedIn: 'root'
 })
 export class AuthService {
+  private baseUrl = environment.apiUrl;
   private http = inject(HttpClient);   // 👈 injeta diretamente
-  private base = 'http://localhost:8000/auth';
 
   login(username: string, password: string): Observable<AuthResponse> {
     const body = new URLSearchParams();
@@ -24,12 +25,12 @@ export class AuthService {
       'Content-Type': 'application/x-www-form-urlencoded'
     });
 
-    return this.http.post<AuthResponse>(`${this.base}/signin`, body.toString(), { headers })
+    return this.http.post<AuthResponse>(`${this.baseUrl}/signin`, body.toString(), { headers })
       .pipe(tap(res => this.saveTokens(res)));
   }
 
   register(email: string, password: string, username?: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.base}/signup`, { email, password, username })
+    return this.http.post<AuthResponse>(`${this.baseUrl}/signup`, { email, password, username })
       .pipe(tap(res => this.saveTokens(res)));
   }
 

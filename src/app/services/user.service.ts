@@ -1,5 +1,6 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { environment } from '../../environments/environment';
 
 export interface User {
   id: number;
@@ -11,7 +12,7 @@ export interface User {
   providedIn: 'root'
 })
 export class UserService {
-  private base = 'http://localhost:8000/api/users';
+  private baseUrl = environment.apiUrl;
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
@@ -37,7 +38,7 @@ export class UserService {
     const token = this.getToken();
     if (!token) throw new Error("Token não encontrado");
 
-    const res = await fetch(`${this.base}/me`, {
+    const res = await fetch(`${this.baseUrl}/me`, {
       headers: this.getHeaders()
     });
 

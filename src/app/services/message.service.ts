@@ -1,5 +1,6 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { environment } from '../../environments/environment';
 
 export type ChatMessage = {
   from: 'user' | 'bot';
@@ -11,7 +12,7 @@ export type ChatMessage = {
   providedIn: 'root'
 })
 export class MessageService {
-  private base = 'http://localhost:8000/api/messages';
+  private baseUrl = environment.apiUrl;
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
@@ -31,7 +32,7 @@ export class MessageService {
   }
 
   async getChatMessages(chatId: number): Promise<ChatMessage[]> {
-    const res = await fetch(`${this.base}/chat/${chatId}`, { headers: this.getHeaders() });
+    const res = await fetch(`${this.baseUrl}/chat/${chatId}`, { headers: this.getHeaders() });
     if (!res.ok) throw new Error('Erro ao carregar mensagens');
     const data = await res.json();
     return data.map((m: any) => ({
@@ -42,7 +43,7 @@ export class MessageService {
   }
 
   async sendMessage(payload: { chat_id: number; role: string; content: string }): Promise<ChatMessage> {
-    const res = await fetch(`${this.base}/add`, {
+    const res = await fetch(`${this.baseUrl}/add`, {
       method: 'POST',
       headers: this.getHeaders(),
       body: JSON.stringify(payload)

@@ -1,11 +1,12 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
-  private base = 'http://localhost:8000/api/chats';
+  private baseUrl = environment.apiUrl;
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
@@ -25,13 +26,13 @@ export class ChatService {
   }
 
   async getUserChats() {
-    const res = await fetch(`${this.base}/userchats`, { headers: this.getHeaders() });
+    const res = await fetch(`${this.baseUrl}/userchats`, { headers: this.getHeaders() });
     if (!res.ok) throw new Error("Erro ao buscar chats");
     return res.json();
   }
 
   async createChat(title: string) {
-    const res = await fetch(`${this.base}/create`, {
+    const res = await fetch(`${this.baseUrl}/create`, {
       method: "POST",
       headers: this.getHeaders(),
       body: JSON.stringify({ title })
@@ -41,7 +42,7 @@ export class ChatService {
   }
 
   async deleteChat(chatId: number) {
-    const res = await fetch(`${this.base}/${chatId}`, {
+    const res = await fetch(`${this.baseUrl}/${chatId}`, {
       method: "DELETE",
       headers: this.getHeaders()
     });
