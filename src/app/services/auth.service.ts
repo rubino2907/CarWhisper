@@ -25,12 +25,12 @@ export class AuthService {
       'Content-Type': 'application/x-www-form-urlencoded'
     });
 
-    return this.http.post<AuthResponse>(`${this.baseUrl}/signin`, body.toString(), { headers })
+    return this.http.post<AuthResponse>(`${this.baseUrl}/auth/signin`, body.toString(), { headers })
       .pipe(tap(res => this.saveTokens(res)));
   }
 
   register(email: string, password: string, username?: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.baseUrl}/signup`, { email, password, username })
+    return this.http.post<AuthResponse>(`${this.baseUrl}/auth/signup`, { email, password, username })
       .pipe(tap(res => this.saveTokens(res)));
   }
 

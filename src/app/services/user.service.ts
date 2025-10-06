@@ -38,7 +38,7 @@ export class UserService {
     const token = this.getToken();
     if (!token) throw new Error("Token não encontrado");
 
-    const res = await fetch(`${this.baseUrl}/me`, {
+    const res = await fetch(`${this.baseUrl}/api/users/me`, {
       headers: this.getHeaders()
     });
 

@@ -26,13 +26,13 @@ export class ChatService {
   }
 
   async getUserChats() {
-    const res = await fetch(`${this.baseUrl}/userchats`, { headers: this.getHeaders() });
+    const res = await fetch(`${this.baseUrl}/api/user/userchats`, { headers: this.getHeaders() });
     if (!res.ok) throw new Error("Erro ao buscar chats");
     return res.json();
   }
 
   async createChat(title: string) {
-    const res = await fetch(`${this.baseUrl}/create`, {
+    const res = await fetch(`${this.baseUrl}/api/chats/create`, {
       method: "POST",
       headers: this.getHeaders(),
       body: JSON.stringify({ title })

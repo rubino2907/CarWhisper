@@ -32,7 +32,7 @@ export class MessageService {
   }
 
   async getChatMessages(chatId: number): Promise<ChatMessage[]> {
-    const res = await fetch(`${this.baseUrl}/chat/${chatId}`, { headers: this.getHeaders() });
+    const res = await fetch(`${this.baseUrl}/api/chat/${chatId}`, { headers: this.getHeaders() });
     if (!res.ok) throw new Error('Erro ao carregar mensagens');
     const data = await res.json();
     return data.map((m: any) => ({
@@ -43,7 +43,7 @@ export class MessageService {
   }
 
   async sendMessage(payload: { chat_id: number; role: string; content: string }): Promise<ChatMessage> {
-    const res = await fetch(`${this.baseUrl}/add`, {
+    const res = await fetch(`${this.baseUrl}/api/messages/add`, {
       method: 'POST',
       headers: this.getHeaders(),
       body: JSON.stringify(payload)
