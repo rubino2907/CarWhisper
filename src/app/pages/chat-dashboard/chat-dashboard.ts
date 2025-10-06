@@ -160,7 +160,7 @@ export class ChatDashboard {
 
     const botMessage: ChatMessage = {
       from: 'bot',
-      message: 'Olá! Eu sou o CarWhisper, fala-me do teu carro 🚗',
+      message: 'Olá! Eu sou o CarWhisperer, fala-me do teu carro 🚗',
       time: new Date(),
     };
 
@@ -204,7 +204,7 @@ export class ChatDashboard {
       const messages = await this.messageService.getChatMessages(chatId);
       const botMessage: ChatMessage = {
         from: 'bot',
-        message: 'Olá! Eu sou o CarWhisper, fala-me do teu carro 🚗',
+        message: 'Olá! Eu sou o CarWhisperer, fala-me do teu carro 🚗',
         time: new Date(),
       };
       this.ngZone.run(() => {
