@@ -88,16 +88,36 @@
       <h3>Chat com {{ selectedChat.model }}</h3>
 
      <!-- Container de mensagens -->
+    <!-- Container de mensagens -->
     <div class="messages" #messagesContainer>
       <div *ngFor="let msg of chatMessages" [ngClass]="msg.from" class="message-item">
         <div class="message-body">
+          
+          <!-- Quem enviou -->
           <strong *ngIf="msg.from==='user'">You:</strong>
           <strong *ngIf="msg.from==='bot'">{{ selectedChat.model }}:</strong>
-          <span class="message-text">{{ msg.message }}</span>
+
+          <!-- Mensagem de YouTube -->
+          <ng-container *ngIf="msg.videoId; else normalMsg">
+            <a [href]="'https://www.youtube.com/watch?v=' + msg.videoId" target="_blank" class="youtube-card">
+              <img [src]="'https://img.youtube.com/vi/' + msg.videoId + '/hqdefault.jpg'" alt="YouTube Thumbnail"/>
+              <span>Assistir no YouTube</span>
+            </a>
+          </ng-container>
+
+          <!-- Mensagem normal -->
+          <ng-template #normalMsg>
+            <span class="message-text">{{ msg.message }}</span>
+          </ng-template>
+
+          <!-- Horário -->
           <div class="message-time">{{ msg.time | date:'HH:mm' }}</div>
         </div>
       </div>
     </div>
+
+
+
 
       <div class="chat-input">
         <input #msgInput placeholder="Escreve a tua mensagem..." />

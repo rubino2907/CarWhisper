@@ -20,6 +20,7 @@ type ChatMessage = {
   from: 'user' | 'bot';
   message: string;
   time: Date;
+  videoId?: string | null;
 };
 
 @Component({
@@ -29,9 +30,10 @@ type ChatMessage = {
   standalone: true,
   imports: [CommonModule, FormsModule, ConfirmDialog, NewChatDialog],
 })
-export class ChatDashboard implements AfterViewChecked{
+export class ChatDashboard implements AfterViewChecked {
 
   @ViewChild('messagesContainer') private messagesContainer!: ElementRef;
+
   username = '';
   userId = '';
 
@@ -49,16 +51,10 @@ export class ChatDashboard implements AfterViewChecked{
   predictorSteps = ['Basic', 'Usage', 'Fuel & Country', 'Review'];
   predictorData = this.getEmptyPredictorData();
 
-  manufacturers: string[] = [
-    'mercedes-benz','bmw','hyundai','ford','vauxhall','volkswagen','audi','skoda',
-    'toyota','gmc','chevrolet','jeep','nissan','ram','mazda','cadillac','honda',
-    'dodge','lexus','jaguar','buick','chrysler','volvo','infiniti','lincoln','alfa-romeo',
-    'subaru','acura','mitsubishi','porsche','kia','ferrari','mini','pontiac','fiat','rover',
-    'tesla','saturn','mercury','harley-davidson','datsun','aston-martin','land rover',
-    'suzuki','citroen','seat','lancia','smart','hummer','bentley','maserati','isuzu',
-    'lamborghini','lotus','renault','peugeot','rolls-royce','dacia'
-  ];
+  manufacturers: string[] = ['mercedes-benz','bmw','hyundai','ford','vauxhall','volkswagen','audi','skoda','toyota','gmc','chevrolet','jeep','nissan','ram','mazda','cadillac','honda','dodge','lexus','jaguar','buick','chrysler','volvo','infiniti','lincoln','alfa-romeo','subaru','acura','mitsubishi','porsche','kia','ferrari','mini','pontiac','fiat','rover','tesla','saturn','mercury','harley-davidson','datsun','aston-martin','land rover','suzuki','citroen','seat','lancia','smart','hummer','bentley','maserati','isuzu','lamborghini','lotus','renault','peugeot','rolls-royce','dacia'];
   countries: string[] = ['US', 'UK', 'DE'];
+
+  searchTerm: string = '';
 
   constructor(
     private ngZone: NgZone,
@@ -82,18 +78,17 @@ export class ChatDashboard implements AfterViewChecked{
   }
 
   logout() {
-    localStorage.removeItem('token'); // ou sessionStorage, conforme usas
+    localStorage.removeItem('token');
     this.username = '';
     this.selectedChat = null;
     this.chats = [];
     this.chatMessages = [];
-    // redireciona para login
     window.location.href = '/login';
   }
 
-  // ========================
+  // -------------------------------
   // Chats
-  // ========================
+  // -------------------------------
 
   async loadUserChats() {
     try {
@@ -122,7 +117,7 @@ export class ChatDashboard implements AfterViewChecked{
         this.chats = [newChat, ...this.chats];
       });
 
-      await this.loadUserChats(); // atualiza lista completa
+      await this.loadUserChats();
     } catch (err) {
       console.error('Erro ao criar chat:', err);
     }
@@ -145,8 +140,6 @@ export class ChatDashboard implements AfterViewChecked{
     }
   }
 
-  searchTerm: string = '';
-
   get filteredChats(): ChatCard[] {
     if (!this.searchTerm.trim()) return this.chats;
     const term = this.searchTerm.toLowerCase();
@@ -168,7 +161,6 @@ export class ChatDashboard implements AfterViewChecked{
 
     this.chatMessages = [botMessage];
     this.loadChatMessages(chat.id);
-    this.scrollToBottom(); // rola ao abrir
   }
 
   closeChat() {
@@ -198,72 +190,72 @@ export class ChatDashboard implements AfterViewChecked{
     this.showNewChatPopup = false;
   }
 
-  // ========================
+  // -------------------------------
   // Messages
-  // ========================
+  // -------------------------------
 
   async loadChatMessages(chatId: number) {
     try {
-      console.log('Carregar mensagens do chat:', chatId);
       const messages = await this.messageService.getChatMessages(chatId);
-      const botMessage: ChatMessage = {
-        from: 'bot',
-        message: 'Olá! Eu sou o CarWhisperer, fala-me do teu carro 🚗',
-        time: new Date(),
-      };
+
       this.ngZone.run(() => {
-        this.chatMessages = [botMessage, ...messages];
+        this.chatMessages = messages.map(msg => this.processMessage(msg));
+        this.scrollToBottom(true); // força scroll
       });
     } catch (err) {
       console.error('Erro ao carregar mensagens:', err);
     }
   }
 
-    async sendMessage(inputValue: string) {
-      if (!inputValue || !this.selectedChat) return;
+  async sendMessage(inputValue: string) {
+    if (!inputValue || !this.selectedChat) return;
 
-      try {
-        const newMessage = await this.messageService.sendMessage({
-          chat_id: this.selectedChat.id,
-          role: 'user',
-          content: inputValue,
-        });
+    try {
+      const newMessage = await this.messageService.sendMessage({
+        chat_id: this.selectedChat.id,
+        role: 'user',
+        content: inputValue,
+      });
 
-        this.ngZone.run(() => {
-          this.chatMessages.push(newMessage);
-          this.scrollToBottom();
-        });
+      this.ngZone.run(() => {
+        this.chatMessages.push(this.processMessage(newMessage));
+        this.scrollToBottom(true);
+      });
 
-        // Simula resposta do bot (opcional)
-      setTimeout(() => {
-        this.ngZone.run(() => {
-          this.chatMessages.push({
-            from: 'user',
-            message: 'Resposta automática do bot',
-            time: new Date()
-          });
-          this.scrollToBottom();
+    } catch (err) {
+      console.error(err);
+      this.ngZone.run(() => {
+        this.chatMessages.push({
+          from: 'bot',
+          message: 'Não foi possível enviar a mensagem 😅',
+          time: new Date()
         });
-      }, 400);
-
-      } catch (err) {
-        console.error(err);
-        this.ngZone.run(() => {
-          this.chatMessages.push({
-            from: 'bot',
-            message: 'Não foi possível enviar a mensagem 😅',
-            time: new Date()
-          });
-          this.scrollToBottom();
-        });
-      }
+        this.scrollToBottom(true);
+      });
     }
+  }
 
-  // Scroll automático para o fim
+  private processMessage(msg: any): ChatMessage {
+    const ytRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/;
+    const match = msg.message.match(ytRegex);
+
+    return {
+      from: msg.from,
+      message: msg.message,
+      time: new Date(msg.time),
+      videoId: match ? match[1] : null
+    };
+  }
+
+  // -------------------------------
+  // Scroll automático
+  // -------------------------------
+
   private scrollToBottom(force: boolean = false): void {
-    const container = this.messagesContainer.nativeElement;
+    if (!this.messagesContainer) return;
 
-    const threshold = 50; // px antes do fundo para considerar "quase no fundo"
+    const container = this.messagesContainer.nativeElement;
+    const threshold = 50;
     const atBottom = container.scrollHeight - container.scrollTop - container.clientHeight < threshold;
 
     if (atBottom || force) {
@@ -273,15 +265,13 @@ export class ChatDashboard implements AfterViewChecked{
     }
   }
 
-
   ngAfterViewChecked() {
     this.scrollToBottom();
   }
 
-
-  // ========================
+  // -------------------------------
   // Value Predictor
-  // ========================
+  // -------------------------------
 
   openValuePredictor() {
     this.activeSection = 'predictor';
