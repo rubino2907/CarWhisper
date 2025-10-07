@@ -94,7 +94,6 @@
       <button (click)="closeChat()">← Back to chats</button>
       <h3>Chat com {{ selectedChat.model }}</h3>
 
-     <!-- Container de mensagens -->
     <!-- Container de mensagens -->
     <div class="messages" #messagesContainer>
       <div *ngFor="let msg of chatMessages" [ngClass]="msg.from" class="message-item">
@@ -102,26 +101,27 @@
           
           <!-- Quem enviou -->
           <strong *ngIf="msg.from==='user'">You:</strong>
-          <strong *ngIf="msg.from==='bot'">{{ selectedChat.model }}:</strong>
+          <strong *ngIf="msg.from==='bot' && selectedChat">
+            {{ selectedChat.model || 'CarWhisperer' }}:
+          </strong>
 
-          <!-- Mensagem de YouTube -->
-          <ng-container *ngIf="msg.videoId; else normalMsg">
-            <a [href]="'https://www.youtube.com/watch?v=' + msg.videoId" target="_blank" class="youtube-card">
+          <!-- Texto da mensagem (mostra sempre) -->
+          <span class="message-text">{{ msg.message }}</span>
+
+          <!-- Mostra cartão do YouTube se existir -->
+          <div *ngIf="msg.videoId" class="youtube-card">
+            <a [href]="'https://www.youtube.com/watch?v=' + msg.videoId" target="_blank">
               <img [src]="'https://img.youtube.com/vi/' + msg.videoId + '/hqdefault.jpg'" alt="YouTube Thumbnail"/>
               <span>Assistir no YouTube</span>
             </a>
-          </ng-container>
-
-          <!-- Mensagem normal -->
-          <ng-template #normalMsg>
-            <span class="message-text">{{ msg.message }}</span>
-          </ng-template>
+          </div>
 
           <!-- Horário -->
           <div class="message-time">{{ msg.time | date:'HH:mm' }}</div>
         </div>
       </div>
     </div>
+
 
 
 

@@ -243,11 +243,12 @@ export class ChatDashboard implements AfterViewChecked {
 
     return {
       from: msg.from,
-      message: msg.message,
+      message: msg.message, // mantém o texto completo, mesmo com link
       time: new Date(msg.time),
       videoId: match ? match[1] : null
     };
   }
+
 
   // -------------------------------
   // Scroll automático
