@@ -88,7 +88,7 @@ export class LoginPage {
       .subscribe({
         next: (res: any) => {
           this.loading = false;
-          localStorage.setItem('token', res.token);  // Guarda o token
+          localStorage.setItem('token', res.access_token);  // Guarda o token
           console.log('Registo bem-sucedido, token armazenado:', res.token);
           this.router.navigate(['/chat-dashboard']);
         },

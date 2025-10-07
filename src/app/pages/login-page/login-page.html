@@ -48,7 +48,6 @@
       <input type="password" id="register-password" [(ngModel)]="registerPassword" placeholder="Digite a sua password">
 
       <div class="auth-actions">
-        <button type="button" class="login-btn" (click)="toggleAuth()" [disabled]="loading">Login</button>
         <button type="button" class="register-btn" (click)="register()" [disabled]="loading">
           {{ loading ? 'A carregar...' : 'Registar' }}
         </button>
