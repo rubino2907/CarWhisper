@@ -62,7 +62,7 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
-           "options": {},
+           
           "configurations": {
             "production": {
               "buildTarget": "chat-dashboard:build:production"
