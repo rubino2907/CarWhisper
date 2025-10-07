@@ -87,7 +87,8 @@
       <button (click)="closeChat()">← Back to chats</button>
       <h3>Chat com {{ selectedChat.model }}</h3>
 
-     <div class="messages">
+     <!-- Container de mensagens -->
+    <div class="messages" #messagesContainer>
       <div *ngFor="let msg of chatMessages" [ngClass]="msg.from" class="message-item">
         <div class="message-body">
           <strong *ngIf="msg.from==='user'">You:</strong>
@@ -97,9 +98,6 @@
         </div>
       </div>
     </div>
-
-
-
 
       <div class="chat-input">
         <input #msgInput placeholder="Escreve a tua mensagem..." />

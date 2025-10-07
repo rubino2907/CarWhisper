@@ -236,7 +236,7 @@
   display: flex;
   flex-direction: column;
   padding: 36px;
-  overflow-y: auto;         /* scroll só na área de conteúdo */
+  overflow: hidden; /* nada rola aqui */
 }
 
 /* Controls */
@@ -300,6 +300,7 @@
   flex-direction: column;
   gap: 12px;
   flex:1;
+  overflow: hidden; /* scroll controlado só em .messages */
 }
 
 .chat-header {
@@ -343,6 +344,29 @@
   gap: 14px;
   padding: 16px;
   background: #fff;
+  scroll-behavior: smooth; /* rolagem suave */
+  scrollbar-width: thin;
+  scrollbar-color: #4D79D2 #f1f5f9; /* thumb + track */
+}
+
+/* Para navegadores Webkit (Chrome, Edge, Safari) */
+.messages::-webkit-scrollbar {
+  width: 8px; /* largura da barra */
+}
+
+.messages::-webkit-scrollbar-track {
+  background: #f1f5f9; /* fundo da track */
+  border-radius: 10px;
+}
+
+.messages::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #4D79D2, #1C3D72); /* gradiente azul */
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+.messages::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #6b9bff, #2b6ef6); /* efeito hover mais claro */
 }
 
 .messages .message-item {

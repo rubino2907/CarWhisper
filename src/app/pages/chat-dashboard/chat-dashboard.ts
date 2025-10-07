@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, NgZone } from '@angular/core';
+import { AfterViewChecked, Component, ElementRef, NgZone, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ConfirmDialog } from '../../shared/confirm-dialog/confirm-dialog';
 import { NewChatDialog } from '../../shared/new-chat-dialog/new-chat-dialog';
@@ -29,7 +29,9 @@ type ChatMessage = {
   standalone: true,
   imports: [CommonModule, FormsModule, ConfirmDialog, NewChatDialog],
 })
-export class ChatDashboard {
+export class ChatDashboard implements AfterViewChecked{
+
+  @ViewChild('messagesContainer') private messagesContainer!: ElementRef;
   username = '';
   userId = '';
 
@@ -166,6 +168,7 @@ export class ChatDashboard {
 
     this.chatMessages = [botMessage];
     this.loadChatMessages(chat.id);
+    this.scrollToBottom(); // rola ao abrir
   }
 
   closeChat() {
@@ -216,33 +219,65 @@ export class ChatDashboard {
     }
   }
 
-  async sendMessage(inputValue: string) {
-    if (!inputValue || !this.selectedChat) return;
+    async sendMessage(inputValue: string) {
+      if (!inputValue || !this.selectedChat) return;
 
-    try {
-      const newMessage = await this.messageService.sendMessage({
-        chat_id: this.selectedChat.id,
-        role: 'user',
-        content: inputValue,
-      });
-
-      console.log('selected id chat: ', this.selectedChat.id);
-      console.log('selected id chat: ', inputValue);
-      
-      this.ngZone.run(() => {
-        this.chatMessages.push(newMessage);
-      });
-    } catch (err) {
-      console.error(err);
-      this.ngZone.run(() => {
-        this.chatMessages.push({
-          from: 'bot',
-          message: 'Não foi possível enviar a mensagem 😅',
-          time: new Date(),
+      try {
+        const newMessage = await this.messageService.sendMessage({
+          chat_id: this.selectedChat.id,
+          role: 'user',
+          content: inputValue,
         });
-      });
+
+        this.ngZone.run(() => {
+          this.chatMessages.push(newMessage);
+          this.scrollToBottom();
+        });
+
+        // Simula resposta do bot (opcional)
+      setTimeout(() => {
+        this.ngZone.run(() => {
+          this.chatMessages.push({
+            from: 'user',
+            message: 'Resposta automática do bot',
+            time: new Date()
+          });
+          this.scrollToBottom();
+        });
+      }, 400);
+
+      } catch (err) {
+        console.error(err);
+        this.ngZone.run(() => {
+          this.chatMessages.push({
+            from: 'bot',
+            message: 'Não foi possível enviar a mensagem 😅',
+            time: new Date()
+          });
+          this.scrollToBottom();
+        });
+      }
+    }
+
+  // Scroll automático para o fim
+  private scrollToBottom(force: boolean = false): void {
+    const container = this.messagesContainer.nativeElement;
+
+    const threshold = 50; // px antes do fundo para considerar "quase no fundo"
+    const atBottom = container.scrollHeight - container.scrollTop - container.clientHeight < threshold;
+
+    if (atBottom || force) {
+      setTimeout(() => {
+        container.scrollTop = container.scrollHeight;
+      }, 50);
     }
   }
+
+
+  ngAfterViewChecked() {
+    this.scrollToBottom();
+  }
+
 
   // ========================
   // Value Predictor
