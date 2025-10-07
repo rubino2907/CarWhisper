@@ -201,6 +201,7 @@ export class ChatDashboard {
 
   async loadChatMessages(chatId: number) {
     try {
+      console.log('Carregar mensagens do chat:', chatId);
       const messages = await this.messageService.getChatMessages(chatId);
       const botMessage: ChatMessage = {
         from: 'bot',
@@ -225,6 +226,9 @@ export class ChatDashboard {
         content: inputValue,
       });
 
+      console.log('selected id chat: ', this.selectedChat.id);
+      console.log('selected id chat: ', inputValue);
+      
       this.ngZone.run(() => {
         this.chatMessages.push(newMessage);
       });
