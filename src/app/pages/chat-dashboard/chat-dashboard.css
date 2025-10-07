@@ -19,9 +19,40 @@
 .user-info {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-between; /* nome à esquerda, botões à direita */
   margin-bottom: 16px;
   padding: 6px 0;
+}
+
+.user-actions {
+  display: flex;
+  gap: 6px; /* deixa os botões juntos, mas com um pequeno espaço */
+}
+
+/* Botão Perfil */
+.profile-btn {
+  padding: 6px 12px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #4D79D2, #1C3D72);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: 0.2s;
+}
+
+.profile-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(28, 61, 114, 0.25);
+}
+
+.profile-btn i {
+  font-size: 1rem;
 }
 
 /* --- Botão de Logout (tema azul) --- */
@@ -411,37 +442,6 @@
   color: rgba(0,0,0,0.5);
   margin-top: 6px;
   margin-left: 2px; /* pequena margem à esquerda */
-}
-
-.youtube-card {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  overflow: hidden;
-  text-decoration: none;
-  max-width: 300px;
-  background: #f9fafb;
-  transition: 0.2s;
-}
-
-.youtube-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(28,61,114,0.15);
-}
-
-.youtube-card img {
-  width: 100%;
-  display: block;
-}
-
-.youtube-card span {
-  padding: 6px 10px;
-  font-size: 0.85rem;
-  color: #1C3D72;
-  text-align: center;
-  font-weight: 600;
 }
 
 

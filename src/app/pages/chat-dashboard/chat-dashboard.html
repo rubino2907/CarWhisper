@@ -5,10 +5,17 @@
   <aside class="sidebar">
     <div class="user-info">
       <p class="name">{{ username || 'Carregando...' }}</p>
-      <button class="logout-btn" (click)="logout()">
-        <i class="fa-solid fa-right-from-bracket"></i> Logout
-      </button>
+      <div class="user-actions">
+        <button class="profile-btn" (click)="goToProfile()">
+          <i class="fa-solid fa-user"></i> 
+        </button>
+        <button class="logout-btn" (click)="logout()">
+          <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </button>
+      </div>
     </div>
+
+
 
     <div class="search">
       <input placeholder="Search for chats..." [(ngModel)]="searchTerm"/>

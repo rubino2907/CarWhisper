@@ -6,6 +6,7 @@ import { NewChatDialog } from '../../shared/new-chat-dialog/new-chat-dialog';
 import { ChatService } from '../../services/chat.service';
 import { MessageService } from '../../services/message.service';
 import { UserService } from '../../services/user.service';
+import { Router } from '@angular/router';
 
 interface ChatCard {
   id: number;
@@ -60,7 +61,8 @@ export class ChatDashboard implements AfterViewChecked {
     private ngZone: NgZone,
     private chatService: ChatService,
     private messageService: MessageService,
-    private userService: UserService
+    private userService: UserService,
+    private router: Router 
   ) {}
 
   async ngOnInit() {
@@ -340,4 +342,19 @@ export class ChatDashboard implements AfterViewChecked {
         })
       );
   }
+
+  // -------------------------------
+  // Go too
+  // -------------------------------
+
+  
+  // função para ir ao perfil
+  goToProfile() {
+    // usa ngZone se estiver dentro de chamadas assíncronas
+    this.ngZone.run(() => {
+      this.router.navigate(['/profile']);
+    });
+  }
+
+
 }

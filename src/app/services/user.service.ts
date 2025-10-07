@@ -5,7 +5,8 @@ import { environment } from '../../environments/environment';
 export interface User {
   id: number;
   username: string;
-  email?: string;
+  email: string;
+  createdAt?: string; // ⚡ adiciona isto
 }
 
 @Injectable({
