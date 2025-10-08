@@ -42,7 +42,7 @@ export class ChatService {
   }
 
   async deleteChat(chatId: number) {
-    const res = await fetch(`${this.baseUrl}/${chatId}`, {
+    const res = await fetch(`${this.baseUrl}/api/chats/delete/${chatId}`, {
       method: "DELETE",
       headers: this.getHeaders()
     });
