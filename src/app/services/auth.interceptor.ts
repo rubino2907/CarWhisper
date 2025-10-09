@@ -1,19 +1,16 @@
-import { Injectable } from '@angular/core';
-import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpInterceptorFn } from '@angular/common/http';
 
-@Injectable()
-export class AuthInterceptor implements HttpInterceptor {
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const token = localStorage.getItem('carwhisper_token');
+export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
-    if (token) {
-      const authReq = req.clone({
-        headers: req.headers.set('Authorization', `Bearer ${token}`),
-      });
-      return next.handle(authReq);
-    }
+  const token = localStorage.getItem('token');
 
-    return next.handle(req);
+  if (token) {
+    const authReq = req.clone({
+      headers: req.headers.set('Authorization', `Bearer ${token}`),
+    });
+    return next(authReq);
   }
-}
+
+  console.log('❌ AuthInterceptor: No token found, sending request without Authorization header');
+  return next(req);
+};

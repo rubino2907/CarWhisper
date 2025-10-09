@@ -32,7 +32,6 @@ type ChatMessage = {
   imports: [CommonModule, FormsModule, ConfirmDialog, NewChatDialog],
 })
 export class ChatDashboard implements AfterViewChecked {
-
   @ViewChild('messagesContainer') private messagesContainer!: ElementRef;
 
   username = '';
@@ -52,7 +51,66 @@ export class ChatDashboard implements AfterViewChecked {
   predictorSteps = ['Basic', 'Usage', 'Fuel & Country', 'Review'];
   predictorData = this.getEmptyPredictorData();
 
-  manufacturers: string[] = ['mercedes-benz','bmw','hyundai','ford','vauxhall','volkswagen','audi','skoda','toyota','gmc','chevrolet','jeep','nissan','ram','mazda','cadillac','honda','dodge','lexus','jaguar','buick','chrysler','volvo','infiniti','lincoln','alfa-romeo','subaru','acura','mitsubishi','porsche','kia','ferrari','mini','pontiac','fiat','rover','tesla','saturn','mercury','harley-davidson','datsun','aston-martin','land rover','suzuki','citroen','seat','lancia','smart','hummer','bentley','maserati','isuzu','lamborghini','lotus','renault','peugeot','rolls-royce','dacia'];
+  manufacturers: string[] = [
+    'mercedes-benz',
+    'bmw',
+    'hyundai',
+    'ford',
+    'vauxhall',
+    'volkswagen',
+    'audi',
+    'skoda',
+    'toyota',
+    'gmc',
+    'chevrolet',
+    'jeep',
+    'nissan',
+    'ram',
+    'mazda',
+    'cadillac',
+    'honda',
+    'dodge',
+    'lexus',
+    'jaguar',
+    'buick',
+    'chrysler',
+    'volvo',
+    'infiniti',
+    'lincoln',
+    'alfa-romeo',
+    'subaru',
+    'acura',
+    'mitsubishi',
+    'porsche',
+    'kia',
+    'ferrari',
+    'mini',
+    'pontiac',
+    'fiat',
+    'rover',
+    'tesla',
+    'saturn',
+    'mercury',
+    'harley-davidson',
+    'datsun',
+    'aston-martin',
+    'land rover',
+    'suzuki',
+    'citroen',
+    'seat',
+    'lancia',
+    'smart',
+    'hummer',
+    'bentley',
+    'maserati',
+    'isuzu',
+    'lamborghini',
+    'lotus',
+    'renault',
+    'peugeot',
+    'rolls-royce',
+    'dacia',
+  ];
   countries: string[] = ['US', 'UK', 'DE'];
 
   searchTerm: string = '';
@@ -62,7 +120,7 @@ export class ChatDashboard implements AfterViewChecked {
     private chatService: ChatService,
     private messageService: MessageService,
     private userService: UserService,
-    private router: Router 
+    private router: Router
   ) {}
 
   async ngOnInit() {
@@ -70,13 +128,15 @@ export class ChatDashboard implements AfterViewChecked {
     await this.loadUserChats();
   }
 
-  private async loadUser() {
-    try {
-      const user = await this.userService.getCurrentUser();
-      this.ngZone.run(() => (this.username = user.username));
-    } catch (err) {
-      console.error('Erro ao carregar user:', err);
-    }
+  private loadUser() {
+    this.userService.getCurrentUser().subscribe({
+      next: (user) => {
+        this.ngZone.run(() => (this.username = user.username));
+      },
+      error: (err) => {
+        console.error('Erro ao carregar user:', err);
+      },
+    });
   }
 
   logout() {
@@ -92,62 +152,69 @@ export class ChatDashboard implements AfterViewChecked {
   // Chats
   // -------------------------------
 
-  async loadUserChats() {
-    try {
-      const data = await this.chatService.getUserChats();
-      this.ngZone.run(() => {
-        this.chats = data.Chats.map((chat: any) => ({
-          ...chat,
-          model: chat.model || 'CarModel',
-          lastMessage: chat.lastMessage || 'Sem mensagens ainda',
-        }));
-      });
-    } catch (err) {
-      console.error('Erro ao carregar chats:', err);
-    }
+  loadUserChats() {
+    this.chatService.getUserChats().subscribe({
+      next: (data) => {
+        this.ngZone.run(() => {
+          this.chats = data.Chats.map((chat: any) => ({
+            ...chat,
+            model: chat.model || 'CarModel',
+            lastMessage: chat.lastMessage || 'Sem mensagens ainda',
+          }));
+        });
+      },
+      error: (err) => {
+        console.error('Erro ao carregar chats:', err);
+      },
+    });
   }
 
-  async createNewChat(title: string) {
+  createNewChat(title: string) {
     if (!title.trim()) return;
 
-    try {
-      const newChat: ChatCard = await this.chatService.createChat(title);
-      if (!newChat.model) newChat.model = 'CarModel';
+    this.chatService.createChat(title).subscribe({
+      next: (newChat: ChatCard) => {
+        if (!newChat.model) newChat.model = 'CarModel';
 
-      this.ngZone.run(() => {
-        this.openChat(newChat);
-        this.chats = [newChat, ...this.chats];
-      });
+        this.ngZone.run(() => {
+          this.openChat(newChat);
+          this.chats = [newChat, ...this.chats];
+        });
 
-      await this.loadUserChats();
-    } catch (err) {
-      console.error('Erro ao criar chat:', err);
-    }
+        this.loadUserChats();
+      },
+      error: (err) => {
+        console.error('Erro ao criar chat:', err);
+      },
+    });
   }
 
-  async deleteChatByIndex(index: number | null) {
+  deleteChatByIndex(index: number | null) {
     if (index === null) return;
     const chat = this.chats[index];
 
-    try {
-      await this.chatService.deleteChat(chat.id);
-      this.ngZone.run(() => {
-        if (this.selectedChat === chat) this.closeChat();
-        this.chats.splice(index, 1);
-        this.showConfirm = false;
-        this.confirmIndex = null;
-      });
-    } catch (err) {
-      console.error('Erro ao apagar chat:', err);
-    }
+    this.chatService.deleteChat(chat.id).subscribe({
+      next: () => {
+        this.ngZone.run(() => {
+          if (this.selectedChat === chat) this.closeChat();
+          this.chats.splice(index, 1);
+          this.showConfirm = false;
+          this.confirmIndex = null;
+        });
+      },
+      error: (err) => {
+        console.error('Erro ao apagar chat:', err);
+      },
+    });
   }
 
   get filteredChats(): ChatCard[] {
     if (!this.searchTerm.trim()) return this.chats;
     const term = this.searchTerm.toLowerCase();
-    return this.chats.filter(chat =>
-      chat.title.toLowerCase().includes(term) ||
-      (chat.model && chat.model.toLowerCase().includes(term))
+    return this.chats.filter(
+      (chat) =>
+        chat.title.toLowerCase().includes(term) ||
+        (chat.model && chat.model.toLowerCase().includes(term))
     );
   }
 
@@ -196,45 +263,48 @@ export class ChatDashboard implements AfterViewChecked {
   // Messages
   // -------------------------------
 
-  async loadChatMessages(chatId: number) {
-    try {
-      const messages = await this.messageService.getChatMessages(chatId);
-
-      this.ngZone.run(() => {
-        this.chatMessages = messages.map(msg => this.processMessage(msg));
-        this.scrollToBottom(true); // força scroll
-      });
-    } catch (err) {
-      console.error('Erro ao carregar mensagens:', err);
-    }
+  loadChatMessages(chatId: number) {
+    this.messageService.getChatMessages(chatId).subscribe({
+      next: (messages) => {
+        this.ngZone.run(() => {
+          this.chatMessages = messages.map((msg) => this.processMessage(msg));
+          this.scrollToBottom(true); // força scroll
+        });
+      },
+      error: (err) => {
+        console.error('Erro ao carregar mensagens:', err);
+      },
+    });
   }
 
-  async sendMessage(inputValue: string) {
+  sendMessage(inputValue: string) {
     if (!inputValue || !this.selectedChat) return;
 
-    try {
-      const newMessage = await this.messageService.sendMessage({
+    this.messageService
+      .sendMessage({
         chat_id: this.selectedChat.id,
         role: 'user',
         content: inputValue,
+      })
+      .subscribe({
+        next: (newMessage) => {
+          this.ngZone.run(() => {
+            this.chatMessages.push(this.processMessage(newMessage));
+            this.scrollToBottom(true);
+          });
+        },
+        error: (err) => {
+          console.error(err);
+          this.ngZone.run(() => {
+            this.chatMessages.push({
+              from: 'bot',
+              message: 'Não foi possível enviar a mensagem 😅',
+              time: new Date(),
+            });
+            this.scrollToBottom(true);
+          });
+        },
       });
-
-      this.ngZone.run(() => {
-        this.chatMessages.push(this.processMessage(newMessage));
-        this.scrollToBottom(true);
-      });
-
-    } catch (err) {
-      console.error(err);
-      this.ngZone.run(() => {
-        this.chatMessages.push({
-          from: 'bot',
-          message: 'Não foi possível enviar a mensagem 😅',
-          time: new Date()
-        });
-        this.scrollToBottom(true);
-      });
-    }
   }
 
   private processMessage(msg: any): ChatMessage {
@@ -245,10 +315,9 @@ export class ChatDashboard implements AfterViewChecked {
       from: msg.from,
       message: msg.message, // mantém o texto completo, mesmo com link
       time: new Date(msg.time),
-      videoId: match ? match[1] : null
+      videoId: match ? match[1] : null,
     };
   }
-
 
   // -------------------------------
   // Scroll automático
@@ -259,7 +328,8 @@ export class ChatDashboard implements AfterViewChecked {
 
     const container = this.messagesContainer.nativeElement;
     const threshold = 50;
-    const atBottom = container.scrollHeight - container.scrollTop - container.clientHeight < threshold;
+    const atBottom =
+      container.scrollHeight - container.scrollTop - container.clientHeight < threshold;
 
     if (atBottom || force) {
       setTimeout(() => {
@@ -307,11 +377,7 @@ export class ChatDashboard implements AfterViewChecked {
     const request = { features: { ...this.predictorData } };
     this.chatMessages.push({
       from: 'user',
-      message: `Enviei as features do carro 🚙:\n${JSON.stringify(
-        request.features,
-        null,
-        2
-      )}`,
+      message: `Enviei as features do carro 🚙:\n${JSON.stringify(request.features, null, 2)}`,
       time: new Date(),
     });
     this.chatMessages.push({
@@ -348,7 +414,6 @@ export class ChatDashboard implements AfterViewChecked {
   // Go too
   // -------------------------------
 
-  
   // função para ir ao perfil
   goToProfile() {
     // usa ngZone se estiver dentro de chamadas assíncronas
@@ -356,6 +421,4 @@ export class ChatDashboard implements AfterViewChecked {
       this.router.navigate(['/profile']);
     });
   }
-
-
 }

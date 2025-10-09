@@ -10,10 +10,9 @@ import { FormsModule } from '@angular/forms'; // necessário para ngModel
   imports: [CommonModule, FormsModule],
   templateUrl: './user-profile.html',
   styleUrls: ['./user-profile.css'],
-  standalone: true
+  standalone: true,
 })
 export class UserProfile implements OnInit {
-
   user: User | null = null;
   error: string | null = null;
 
@@ -31,23 +30,25 @@ export class UserProfile implements OnInit {
     this.loadUser();
   }
 
-  private async loadUser() {
-    try {
-      const user = await this.userService.getCurrentUser();
-      this.ngZone.run(() => {
-        this.user = {
-          ...user,
-          createdAt: (user as any).createdAt || new Date().toISOString()
-        };
-        // Inicializa editData com os valores atuais
-        this.editData = { username: this.user.username, email: this.user.email };
-      });
-    } catch (err: any) {
-      console.error('Erro ao carregar user:', err);
-      this.ngZone.run(() => {
-        this.error = err.message || 'Erro ao carregar perfil';
-      });
-    } 
+  private loadUser() {
+    this.userService.getCurrentUser().subscribe({
+      next: (user) => {
+        this.ngZone.run(() => {
+          this.user = {
+            ...user,
+            createdAt: (user as any).createdAt || new Date().toISOString(),
+          };
+          // Inicializa editData com os valores atuais
+          this.editData = { username: this.user.username, email: this.user.email };
+        });
+      },
+      error: (err: any) => {
+        console.error('Erro ao carregar user:', err);
+        this.ngZone.run(() => {
+          this.error = err.message || 'Erro ao carregar perfil';
+        });
+      },
+    });
   }
 
   goBack() {
