@@ -108,6 +108,35 @@ export class AuthService {
     });
   }
 
+  // Test method to verify token renewal works
+  testTokenRenewal(): void {
+    console.log('🧪 Testing token renewal...');
+    const oldToken = localStorage.getItem('token');
+    console.log(
+      '🧪 Current token (first 50 chars):',
+      oldToken ? oldToken.substring(0, 50) + '...' : 'None'
+    );
+
+    this.getCurrentUser().subscribe({
+      next: (user) => {
+        console.log('🧪 Request successful, user:', user);
+        const newToken = localStorage.getItem('token');
+        if (newToken !== oldToken) {
+          console.log('🎉 Token was automatically renewed!');
+          console.log(
+            '🧪 New token (first 50 chars):',
+            newToken ? newToken.substring(0, 50) + '...' : 'None'
+          );
+        } else {
+          console.log('ℹ️ Token was not renewed (probably not close to expiration)');
+        }
+      },
+      error: (err) => {
+        console.log('🧪 Token renewal test failed:', err);
+      },
+    });
+  }
+
   private saveTokens(res: AuthResponse | null): void {
     if (!res) return;
     if (res.access_token) {
