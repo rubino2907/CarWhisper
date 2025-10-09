@@ -1,37 +1,35 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
-import { CanActivate, Router } from '@angular/router';
+import { CanActivate, Router, UrlTree } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
+import { Observable, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
+import { AuthService } from '../services/auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
-  constructor(private router: Router, @Inject(PLATFORM_ID) private platformId: Object) {}
+  constructor(
+    private router: Router,
+    private auth: AuthService,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {}
 
-  canActivate(): boolean {
-    let token: string | null = null;
-
-    if (isPlatformBrowser(this.platformId)) {
-      token = localStorage.getItem('token');
+  canActivate(): Observable<boolean | UrlTree> {
+    // If not running in browser, deny by redirecting to login (adjust as needed for SSR)
+    if (!isPlatformBrowser(this.platformId)) {
+      return of(this.router.parseUrl('/login'));
     }
 
-    if (token && this.isTokenValid(token)) {
-      return true;
-    } else {
-      this.router.navigate(['/login']);
-      return false;
+    const token = localStorage.getItem('token');
+    if (!token) {
+      return of(this.router.parseUrl('/login'));
     }
-  }
 
-  // Verifica se o token JWT está válido (não expirado)
-  private isTokenValid(token: string): boolean {
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      // exp é em segundos
-      const now = Math.floor(Date.now() / 1000);
-      return payload.exp && payload.exp > now;
-    } catch (e) {
-      return false;
-    }
+    // Validate token with backend (/auth/me) via AuthService.validateToken()
+    return this.auth.validateToken().pipe(
+      map((valid) => (valid ? true : this.router.parseUrl('/login'))),
+      catchError(() => of(this.router.parseUrl('/login')))
+    );
   }
 }
