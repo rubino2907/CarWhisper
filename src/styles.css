@@ -1,1 +1,93 @@
-/* You can add global styles to this file, and also import other style files */
+/* --- Reset e box sizing --- */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Inter', sans-serif;
+  line-height: 1.5;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* --- Imagens e vídeos responsivos --- */
+img, video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* --- Links e botões --- */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+}
+
+/* --- Containers flexíveis --- */
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* --- Layouts flexíveis --- */
+.flex {
+  display: flex;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.flex-center {
+  justify-content: center;
+  align-items: center;
+}
+
+/* --- Grid responsivo --- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+/* --- Textos responsivos --- */
+h1, h2, h3, h4, h5, h6, p, span {
+  word-wrap: break-word;
+}
+
+/* --- Scroll suave --- */
+html {
+  scroll-behavior: smooth;
+}
+
+/* --- Media queries para mobile --- */
+@media (max-width: 768px) {
+  .container, .profile-container, .content, .card, .chat-view, .predictor-view {
+    width: 95% !important;
+    padding: 16px !important;
+  }
+
+  .flex, .profile-stats, .actions {
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  button {
+    width: 100% !important;
+    text-align: center;
+  }
+
+  .grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+}

@@ -2,11 +2,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 60px 20px;
-  font-family: "Inter", sans-serif;
+  justify-content: center; /* centraliza verticalmente */
+  height: 100vh; /* ocupa 100% do ecrã */
+  padding: 0 20px; /* apenas padding lateral */
   background: linear-gradient(135deg, #f5f7fa, #e4ecf7);
-  min-height: 100vh;
+  box-sizing: border-box;
+  overflow: hidden; /* evita scroll extra */
 }
+
 
 /* Hero Section */
 .hero {
@@ -82,4 +85,3 @@
   font-size: 0.95rem;
   color: #4b5563;
 }
-

@@ -1,0 +1,72 @@
+<div class="profile-page" *ngIf="user; ">
+  <div class="profile-background">
+    <div class="profile-container">
+      
+      <button class="back-btn" (click)="goBack()">
+        <i class="fa-solid fa-arrow-left"></i> Voltar
+      </button>
+
+      <div class="profile-header">
+        <div class="avatar">
+          <img src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="Avatar" />
+        </div>
+
+        <div class="user-info">
+          <!-- Modo visualização -->
+          <div *ngIf="!editMode" class="fade-in">
+            <h2 class="name">{{ user.username || 'Utilizador' }}</h2>
+            <p class="email">{{ user.email || 'Sem email definido' }}</p>
+            <p class="joined" *ngIf="user?.createdAt">
+              Entrou em {{ user.createdAt | date:'dd/MM/yyyy' }}
+            </p>
+          </div>
+
+          <!-- Modo edição -->
+          <form *ngIf="editMode" class="edit-form fade-in" (ngSubmit)="saveProfile()">
+            <label for="username">Username</label>
+            <input id="username" type="text" [(ngModel)]="editData.username" name="username" required />
+
+            <label for="email">Email</label>
+            <input id="email" type="email" [(ngModel)]="editData.email" name="email" required />
+
+            <div class="edit-actions">
+              <button type="submit" class="save-btn">Salvar</button>
+              <button type="button" class="cancel-btn" (click)="cancelEdit()">Cancelar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="profile-stats">
+        <div class="stat-card">
+          <h3>12</h3>
+          <span>Posts</span>
+        </div>
+        <div class="stat-card">
+          <h3>45</h3>
+          <span>Seguidores</span>
+        </div>
+        <div class="stat-card">
+          <h3>18</h3>
+          <span>Seguindo</span>
+        </div>
+      </div>
+
+      <div class="actions" *ngIf="!editMode">
+        <button class="edit-btn profile-btn" (click)="enableEdit()">
+          <i class="fa-solid fa-pen"></i> Editar Perfil
+        </button>
+        <button class="logout-btn" (click)="logout()">
+          <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<ng-template #loadingTpl>
+  <div class="loading">A carregar dados do utilizador...</div>
+</ng-template>
+
+<div *ngIf="error" class="error">{{ error }}</div>

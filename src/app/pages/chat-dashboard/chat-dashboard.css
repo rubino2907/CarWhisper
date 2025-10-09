@@ -1,9 +1,86 @@
 .page {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;           /* ocupa toda a altura da viewport */
+  overflow: hidden;         /* remove scroll da página inteira */
   background: #f5f6fa;
   font-family: "Inter", sans-serif;
 }
+
+.name {
+  font-family: 'Poppins', 'Inter', sans-serif; /* Poppins é moderna e elegante */
+  font-weight: 600;       /* mais destacado */
+  font-size: 1.2rem;      /* ligeiramente maior */
+  color: #1C3D72;         /* azul escuro consistente com tema */
+  letter-spacing: 0.5px;  /* dá um toque de sofisticação */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* subtil profundidade */
+}
+
+/* --- Botão de Logout --- */
+.user-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* nome à esquerda, botões à direita */
+  margin-bottom: 16px;
+  padding: 6px 0;
+}
+
+.user-actions {
+  display: flex;
+  gap: 6px; /* deixa os botões juntos, mas com um pequeno espaço */
+}
+
+/* Botão Perfil */
+.profile-btn {
+  padding: 6px 12px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #4D79D2, #1C3D72);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: 0.2s;
+}
+
+.profile-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(28, 61, 114, 0.25);
+}
+
+.profile-btn i {
+  font-size: 1rem;
+}
+
+/* --- Botão de Logout (tema azul) --- */
+.logout-btn {
+  padding: 6px 12px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #1C3D72, #4D79D2); /* gradiente azul */
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: 0.2s;
+}
+
+.logout-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(28,61,114,0.25);
+}
+
+.logout-btn i {
+  font-size: 1rem;
+}
+
 
 /* --- Sidebar --- */
 .sidebar {
@@ -13,6 +90,7 @@
   display: flex;
   flex-direction: column;
   background: #ffffff;
+  overflow: hidden; /* ❌ sem scroll */
 }
 
 
@@ -58,16 +136,15 @@
   box-shadow: 0 6px 18px rgba(43,110,246,0.15); 
 }
 
-.pinned { margin-top:16px; color:#6B7280; }
+.pinned { margin-top:10px; color:#6B7280; }
 
 .history {
-  margin-top: 20px;
   display: flex;
   flex-direction: column;
 }
 
 .history h4 {
-  margin-bottom: 8px;
+  margin-bottom: 4px;
   font-size: 0.9rem;
   font-weight: 600;
   color: #374151;
@@ -138,10 +215,18 @@
 }
 
 .chat-model {
-  font-weight: 600;
-  font-size: 0.85rem;
-  color: #1C3D72;
+  font-weight: 700;                 /* Mais destacado */
+  font-size: 0.9rem;                /* Ligeiramente maior */
+  color: #1C3D72;                   /* Mantém o azul escuro */
+  text-transform: uppercase;        /* Dá sensação de etiqueta / badge */
+  letter-spacing: 0.5px;            /* Espaço subtil entre letras */
+  background: #E4EBF8;              /* Fundo suave para destaque */
+  padding: 2px 6px;                 /* Pequeno espaço interno */
+  border-radius: 8px;               /* Bordas arredondadas para modernidade */
+  display: inline-block;            /* Mantém o tamanho do conteúdo */
+  box-shadow: 0 2px 6px rgba(28,61,114,0.1); /* Subtile profundidade */
 }
+
 
 .chat-date {
   font-size: 0.75rem;
@@ -149,16 +234,19 @@
 }
 
 .last-msg {
-  font-size: 0.8rem;
-  color: #374151;
+  font-size: 0.85rem;          /* ligeiramente maior para melhor leitura */
+  color: #4B5563;              /* tom cinza-escuro mais suave e moderno */
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: block;
+  max-width: 100%;             /* garante que respeita o container */
+  transition: color 0.2s;      /* transição suave no hover */
 }
 
 .new-chat { 
-  margin-top:auto; 
+  margin-top:24px; 
   padding:14px; 
   border-radius:12px; 
   background: linear-gradient(90deg,#1C3D72,#4D79D2); 
@@ -174,11 +262,12 @@
 }
 
 /* --- Conteúdo --- */
-.content { 
-  flex:1; 
-  padding:36px; 
-  display:flex; 
-  flex-direction:column;
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 36px;
+  overflow: hidden; /* nada rola aqui */
 }
 
 /* Controls */
@@ -209,14 +298,21 @@
   align-items:center; 
   margin-bottom:8px; 
 }
+
 .badge { 
-  background:#E4EBF8; 
-  color:#1C3D72;
-  padding:6px 10px; 
-  border-radius:12px; 
-  font-size:12px; 
-  font-weight:500;
+  background: linear-gradient(135deg, #E4EBF8, #D0D9F5); /* leve degradê para mais profundidade */
+  color: #1C3D72; 
+  padding: 6px 12px; 
+  border-radius: 14px; 
+  font-size: 0.75rem; /* ligeiramente menor e mais elegante */
+  font-weight: 600; 
+  letter-spacing: 0.5px; 
+  text-transform: uppercase; 
+  display: inline-block; 
+  box-shadow: 0 2px 6px rgba(28,61,114,0.1); /* sutil profundidade */
+  transition: transform 0.2s, box-shadow 0.2s;
 }
+
 .card-foot { 
   display:flex; 
   justify-content:space-between; 
@@ -235,6 +331,7 @@
   flex-direction: column;
   gap: 12px;
   flex:1;
+  overflow: hidden; /* scroll controlado só em .messages */
 }
 
 .chat-header {
@@ -278,6 +375,33 @@
   gap: 14px;
   padding: 16px;
   background: #fff;
+  scroll-behavior: smooth; /* rolagem suave */
+  scrollbar-width: thin;
+  scrollbar-color: #4D79D2 #f1f5f9; /* thumb + track */
+}
+
+/* Para navegadores Webkit (Chrome, Edge, Safari) */
+.messages::-webkit-scrollbar {
+  width: 8px; /* largura da barra */
+}
+
+.messages::-webkit-scrollbar-track {
+  background: #f1f5f9; /* fundo da track */
+  border-radius: 10px;
+}
+
+.messages::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #4D79D2, #1C3D72); /* gradiente azul */
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+.messages::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #6b9bff, #2b6ef6); /* efeito hover mais claro */
+}
+
+.messages .message-item {
+  margin-bottom: 12px;
 }
 
 .messages .user,
@@ -288,22 +412,38 @@
   word-wrap: break-word;
   font-size: 14px;
   line-height: 1.4;
-  box-shadow:0 2px 6px rgba(0,0,0,0.04);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
 }
 
 .messages .user {
   align-self: flex-end;
-  background:#1C3D72;
-  color:white;
-  border-radius: 18px 18px 4px 18px;
+  background: #dbe7ff; /* azul pastel suave, distinto do bot */
+  color: #1C3D72;      /* mesmo tom do texto do bot para consistência */
+  border-radius: 18px 18px 4px 18px; /* mantém a forma “flechada” */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08); /* sombra leve */
+  padding: 12px 16px;   /* garante espaço interno */
+  max-width: 70%;       /* evita que a mensagem ocupe toda a largura */
 }
 
 .messages .bot {
   align-self: flex-start;
-  background:#E4EBF8;
-  color:#1C3D72;
+  background: #E4EBF8;
+  color: #1C3D72;
   border-radius: 18px 18px 18px 4px;
 }
+
+.messages .message-text {
+  display: block;
+  margin-top: 4px; /* separa do nome */
+}
+
+.messages .message-time {
+  font-size: 10px;
+  color: rgba(0,0,0,0.5);
+  margin-top: 6px;
+  margin-left: 2px; /* pequena margem à esquerda */
+}
+
 
 /* --- Input de mensagem --- */
 .chat-input {
@@ -473,4 +613,146 @@
 @keyframes slideUp {
   from { transform: translateY(20px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
+}
+
+/* --- Value Predictor --- */
+.predictor-view {
+  background: #ffffff;
+  padding: 28px 32px;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(28,61,114,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 1;
+  min-height: 0;            /* importante para flex + overflow funcionar */
+  overflow-y: auto;         /* scroll só no predictor se necessário */
+  transition: transform 0.3s ease-in-out;
+}
+
+.predictor-view h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #1C3D72;
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.predictor-progress {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #6B7280;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.predictor-view .step {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.predictor-view label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #374151;
+  font-family: 'Inter', sans-serif;
+}
+
+.predictor-view input,
+.predictor-view select {
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid #d1d5db;
+  font-size: 0.95rem;
+  transition: 0.2s;
+  background-color: #f9fafb;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.predictor-view input:focus,
+.predictor-view select:focus {
+  border-color: #1C3D72;
+  box-shadow: 0 0 0 2px rgba(28,61,114,0.15);
+  outline: none;
+}
+
+.step-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 24px;
+}
+
+.step-actions button {
+  padding: 12px 18px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s;
+  font-family: 'Inter', sans-serif;
+}
+
+.step-actions button[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.step-actions button[type="button"] {
+  background: #E4EBF8;
+  color: #1C3D72;
+}
+
+.step-actions button[type="button"]:hover:not([disabled]) {
+  background: #d1d5db;
+}
+
+.step-actions button[type="submit"] {
+  background: linear-gradient(90deg, #1C3D72, #4D79D2);
+  color: white;
+}
+
+.step-actions button[type="submit"]:hover:not([disabled]) {
+  opacity: 0.9;
+}
+
+.predictor-view .step {
+  flex: 1;
+  overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  .predictor-view {
+    padding: 20px;
+  }
+}
+
+.youtube-card {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  margin-top: 8px;
+  text-decoration: none;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s ease;
+}
+
+.youtube-card img {
+  width: 100%;
+  max-width: 320px;
+  border-radius: 8px;
+}
+
+.youtube-card span {
+  margin-top: 4px;
+  color: #007bff;
+  font-weight: 500;
+}
+
+.youtube-card:hover {
+  transform: scale(1.02);
 }
